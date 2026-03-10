@@ -1,657 +1,313 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Middle East Crisis Command Center</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap');
-        body { font-family: 'Space+Grotesk', sans-serif; background-color: #050a10; color: #e2e8f0; overflow-x: hidden; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        .critical-pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-        
-        /* High-Fidelity Tab Styling */
-        .tab-btn { border-bottom-width: 2px; transition: all 0.2s ease; }
-        .tab-active { border-color: #06b6d4 !important; color: #06b6d4 !important; background-color: rgba(6,182,212,0.05) !important; }
-        .tab-inactive { border-color: transparent; color: #64748b; }
-        .tab-inactive:hover { color: #cbd5e1; }
-        
-        /* Custom Timeline Nodes */
-        .timeline-node::before {
-            content: ''; position: absolute; left: -25px; top: 10px;
-            width: 8px; height: 8px; border-radius: 50%;
-            background-color: #06b6d4; box-shadow: 0 0 10px rgba(6,182,212,0.8);
-        }
-        .intel-node::before {
-            content: ''; position: absolute; left: -25px; top: 24px;
-            width: 8px; height: 8px; border-radius: 50%;
-            background-color: #06b6d4;
-        }
-    </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Middle East Crisis Command Center</title>
+<link rel="manifest" href="manifest.json"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script><script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap');
+body { font-family: 'Space+Grotesk', sans-serif; background-color: #050a10; color: #e2e8f0; overflow-x: hidden; }
+.scrollbar-hide::-webkit-scrollbar { display: none; } .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.critical-pulse { animation: pulse 2s infinite; } @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+.tab-btn { border-bottom-width: 2px; transition: all 0.2s ease; }
+.tab-active { border-color: #06b6d4 !important; color: #06b6d4 !important; background-color: rgba(6,182,212,0.05) !important; }
+.tab-inactive { border-color: transparent; color: #64748b; } .tab-inactive:hover { color: #cbd5e1; }
+.timeline-node::before { content: ''; position: absolute; left: -25px; top: 10px; width: 8px; height: 8px; border-radius: 50%; background-color: #06b6d4; box-shadow: 0 0 10px rgba(6,182,212,0.8); }
+.intel-node::before { content: ''; position: absolute; left: -25px; top: 24px; width: 8px; height: 8px; border-radius: 50%; background-color: #06b6d4; }
+</style>
 </head>
 <body class="p-2 md:p-6">
-    <div class="max-w-[1400px] mx-auto bg-[#0b1219] rounded-xl overflow-hidden border border-[#1e293b] shadow-2xl flex flex-col min-h-[90vh]">
-        
-        <div class="p-6 border-b border-[#1e293b] flex flex-col md:flex-row justify-between items-center bg-[#0d151d] gap-4 shrink-0">
-            <div>
-                <h1 class="text-xl md:text-2xl font-bold tracking-[0.15em] text-white flex items-center gap-3 uppercase">
-                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
-                    MIDDLE EAST CRISIS COMMAND CENTER
-                </h1>
-                <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-[0.3em] ml-9">Strategic Portfolio & Geopolitical Integration</p>
-            </div>
-            <div class="flex items-center gap-6 bg-black/40 p-3 rounded-lg border border-white/5">
-                <div class="text-right hidden md:block">
-                    <div class="text-[8px] text-slate-500 uppercase font-bold mb-1 tracking-widest">Operation Epic Fury</div>
-                    <span class="bg-red-950/40 text-red-500 border border-red-500/30 text-[10px] px-2 py-1 rounded critical-pulse font-bold flex items-center gap-2">
-                        <div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div> THREAT: CRITICAL
-                    </span>
-                </div>
-                <div class="w-px h-8 bg-white/5 hidden md:block"></div>
-                <div class="text-right flex items-center gap-4">
-                    <div>
-                        <div class="text-[8px] text-cyan-500/70 uppercase font-bold mb-1 tracking-widest text-right">Live Sync</div>
-                        <span id="clock" class="text-cyan-400 font-mono text-sm tracking-tighter">00:00:00</span>
-                    </div>
-                    <div onclick="forceRefresh()" class="p-2 border border-white/10 rounded bg-white/5 cursor-pointer hover:bg-white/10 active:scale-95 transition-all">
-                        <svg id="refresh-icon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    </div>
-                </div>
-            </div>
+<div class="max-w-[1400px] mx-auto bg-[#0b1219] rounded-xl border border-[#1e293b] shadow-2xl flex flex-col min-h-[90vh]">
+    
+    <div class="p-6 border-b border-[#1e293b] flex flex-col md:flex-row justify-between items-center bg-[#0d151d] gap-4 shrink-0">
+        <div>
+            <h1 class="text-xl md:text-2xl font-bold tracking-[0.15em] text-white flex items-center gap-3 uppercase">
+                <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                MIDDLE EAST CRISIS COMMAND CENTER
+            </h1>
+            <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-[0.3em] ml-9">Strategic Portfolio & Geopolitical Integration</p>
         </div>
-
-        <div class="flex border-b border-[#1e293b] bg-[#0d151d] overflow-x-auto scrollbar-hide shrink-0">
-            <button onclick="openTab('tab-situation')" id="btn-tab-situation" class="tab-btn tab-active px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2"><svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg> Situation Report</button>
-            <button onclick="openTab('tab-holdings')" id="btn-tab-holdings" class="tab-btn tab-inactive px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2"><svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg> Holdings Background</button>
-            <button onclick="openTab('tab-exposure')" id="btn-tab-exposure" class="tab-btn tab-inactive px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2"><svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg> Exposure Matrix</button>
-            <button onclick="openTab('tab-scenarios')" id="btn-tab-scenarios" class="tab-btn tab-inactive px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2"><svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg> Scenario Mechanics</button>
-            <button onclick="openTab('tab-financials')" id="btn-tab-financials" class="tab-btn tab-inactive px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2"><svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg> Financial Projections</button>
-            <button onclick="openTab('tab-tactical')" id="btn-tab-tactical" class="tab-btn tab-inactive px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2"><svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg> Tactical Horizons</button>
-        </div>
-
-        <div class="flex-grow bg-[#0b1219] relative">
-
-            <div id="tab-situation" class="tab-pane block h-full flex flex-col">
-                <div class="grid grid-cols-1 lg:grid-cols-3 flex-grow">
-                    <div class="lg:col-span-2 p-8 border-r border-[#1e293b]">
-                        <h2 class="text-sm font-bold text-white mb-8 flex items-center gap-2 uppercase tracking-wide">
-                            <span class="text-orange-500">⚠️</span> Real-Time Intelligence Sweep
-                        </h2>
-                        <div class="border-l border-[#1e293b] ml-3 pl-6 space-y-8 relative" id="intel-container">
-                            <p class="text-slate-500 italic">Establishing secure connection...</p>
-                        </div>
-                    </div>
-                    <div class="p-8 bg-[#0a1017]">
-                        <h2 class="text-sm font-bold text-white mb-8 flex items-center gap-2 uppercase tracking-wide">
-                            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg> Active Asset Tracking
-                        </h2>
-                        <div id="asset-container" class="space-y-4"></div>
-                    </div>
-                </div>
-                <div class="p-8 border-t border-[#1e293b] bg-[#0d151d]">
-                    <h3 class="text-[12px] font-bold text-white mb-3 flex items-center gap-2 tracking-wide uppercase">
-                        <span class="text-cyan-500">🌐</span> Strategic Assessment
-                    </h3>
-                    <p id="dynamic-assessment" class="text-sm text-slate-400 leading-relaxed max-w-6xl">
-                        The current threat environment is characterized by extreme tail risks stemming from asymmetric naval warfare in the Strait of Hormuz. The portfolio must be defensively positioned to capture sudden spikes in the geopolitical risk premium ( $BNO , $LNG ) while maintaining structural allocations to long-term sovereign security themes ( $URNM , $CEG , $SHLD ). Tax-advantaged accounts should be utilized for aggressive rebalancing to avoid short-term capital gains drag during this high-volatility window.
-                    </p>
-                </div>
+        <div class="flex items-center gap-6 bg-black/40 p-3 rounded-lg border border-white/5">
+            <div class="text-right hidden md:block">
+                <div class="text-[8px] text-slate-500 uppercase font-bold mb-1 tracking-widest">Operation Epic Fury</div>
+                <span class="bg-red-950/40 text-red-500 border border-red-500/30 text-[10px] px-2 py-1 rounded critical-pulse font-bold flex items-center gap-2"><div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div> THREAT: CRITICAL</span>
             </div>
-
-            <div id="tab-holdings" class="tab-pane hidden p-8">
-                <h2 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Holdings Background & Geopolitical Relevance</h2>
-                <p class="text-sm text-slate-500 mb-8">Fundamental analysis justifying portfolio inclusion against the backdrop of Operation Epic Fury.</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-[#111827] border border-white/5 rounded-xl p-6 hover:border-cyan-500/30 transition-all">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="bg-white/5 px-3 py-1.5 rounded text-white font-bold text-lg">BNO</div>
-                            <div><div class="text-white font-bold text-sm">U.S. Brent Oil Fund</div><div class="text-[10px] text-cyan-400 uppercase tracking-widest font-bold">Energy/Commodity</div></div>
-                        </div>
-                        <p class="text-sm text-slate-400 leading-relaxed mb-6">Tracks the daily price movements of Brent crude oil. Unlike WTI, Brent is the global benchmark. Because roughly 20% of global oil transits the Strait of Hormuz, Brent is uniquely sensitive to Middle Eastern geopolitical shocks. It holds a massive "fear premium" during maritime conflicts.</p>
-                        <div class="bg-black/30 p-4 rounded-lg border border-white/5 flex gap-3"><span class="text-orange-500">⚡</span><div><div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Strategic Value</div><div class="text-sm text-slate-300">Direct proxy for global crude. Immediate beneficiary of Hormuz blockade threat.</div></div></div>
-                    </div>
-                    
-                    <div class="bg-[#111827] border border-white/5 rounded-xl p-6 hover:border-cyan-500/30 transition-all">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="bg-white/5 px-3 py-1.5 rounded text-white font-bold text-lg">URNM</div>
-                            <div><div class="text-white font-bold text-sm">Sprott Uranium Miners</div><div class="text-[10px] text-cyan-400 uppercase tracking-widest font-bold">Nuclear Materials</div></div>
-                        </div>
-                        <p class="text-sm text-slate-400 leading-relaxed mb-6">Provides exposure to global uranium miners. The structural deficit in uranium supply is colliding with a Western mandate to decouple from adversarial energy sources. Nuclear power is the only baseload alternative to fossil fuels that provides sovereign energy security.</p>
-                        <div class="bg-black/30 p-4 rounded-lg border border-white/5 flex gap-3"><span class="text-orange-500">⚡</span><div><div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Strategic Value</div><div class="text-sm text-slate-300">Strategic energy independence. Benefiting from Western pivot away from ME energy.</div></div></div>
-                    </div>
-
-                    <div class="bg-[#111827] border border-white/5 rounded-xl p-6 hover:border-cyan-500/30 transition-all">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="bg-white/5 px-3 py-1.5 rounded text-white font-bold text-lg">SHLD</div>
-                            <div><div class="text-white font-bold text-sm">Global X Defense Tech</div><div class="text-[10px] text-cyan-400 uppercase tracking-widest font-bold">Defense Industrials</div></div>
-                        </div>
-                        <p class="text-sm text-slate-400 leading-relaxed mb-6">Focuses on defense technology and cybersecurity. Operation Epic Fury is burning through multi-million dollar interceptors (SM-3s, Patriots) and offensive drone swarms at an unsustainable rate, guaranteeing massive backlog orders for defense contractors.</p>
-                        <div class="bg-black/30 p-4 rounded-lg border border-white/5 flex gap-3"><span class="text-orange-500">⚡</span><div><div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Strategic Value</div><div class="text-sm text-slate-300">Defense replenishment. Captures munitions burn rate of kinetic conflict.</div></div></div>
-                    </div>
-
-                    <div class="bg-[#111827] border border-white/5 rounded-xl p-6 hover:border-cyan-500/30 transition-all">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="bg-white/5 px-3 py-1.5 rounded text-white font-bold text-lg">CEG</div>
-                            <div><div class="text-white font-bold text-sm">Constellation Energy</div><div class="text-[10px] text-cyan-400 uppercase tracking-widest font-bold">Domestic Utilities</div></div>
-                        </div>
-                        <p class="text-sm text-slate-400 leading-relaxed mb-6">The largest producer of carbon-free nuclear energy in the U.S. It represents total insulation from Middle East supply shocks. Furthermore, its power generation is structurally critical for the ongoing U.S. AI and Data Center structural buildout.</p>
-                        <div class="bg-black/30 p-4 rounded-lg border border-white/5 flex gap-3"><span class="text-orange-500">⚡</span><div><div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Strategic Value</div><div class="text-sm text-slate-300">Domestic baseload power. Insulated from global supply shocks, tied to US grid.</div></div></div>
-                    </div>
-
-                    <div class="bg-[#111827] border border-white/5 rounded-xl p-6 hover:border-cyan-500/30 transition-all">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="bg-white/5 px-3 py-1.5 rounded text-white font-bold text-lg">OUST</div>
-                            <div><div class="text-white font-bold text-sm">Ouster Inc.</div><div class="text-[10px] text-cyan-400 uppercase tracking-widest font-bold">Frontier Tech</div></div>
-                        </div>
-                        <p class="text-sm text-slate-400 leading-relaxed mb-6">Develops high-resolution lidar sensors crucial for autonomous systems, robotics, and defense infrastructure. As geopolitical tensions accelerate the deployment of autonomous defense networks, OUST provides essential "vision" hardware for next-gen systems.</p>
-                        <div class="bg-black/30 p-4 rounded-lg border border-white/5 flex gap-3"><span class="text-orange-500">⚡</span><div><div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Strategic Value</div><div class="text-sm text-slate-300">Critical infrastructure tech. Leveraged to defense autonomy modernization.</div></div></div>
-                    </div>
-
-                    <div class="bg-[#111827] border border-white/5 rounded-xl p-6 hover:border-cyan-500/30 transition-all">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="bg-white/5 px-3 py-1.5 rounded text-white font-bold text-lg">MLPX</div>
-                            <div><div class="text-white font-bold text-sm">Global X MLP & Infra</div><div class="text-[10px] text-cyan-400 uppercase tracking-widest font-bold">Domestic Midstream</div></div>
-                        </div>
-                        <p class="text-sm text-slate-400 leading-relaxed mb-6">Provides exposure to U.S. midstream energy infrastructure, including pipelines and storage facilities. As Middle Eastern supply chains become threatened, domestic energy logistics become paramount, insulating from global shipping disruptions.</p>
-                        <div class="bg-black/30 p-4 rounded-lg border border-white/5 flex gap-3"><span class="text-orange-500">⚡</span><div><div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Strategic Value</div><div class="text-sm text-slate-300">Domestic energy security. High-yield defensive play insulated from maritime risks.</div></div></div>
-                    </div>
-                </div>
+            <div class="w-px h-8 bg-white/5 hidden md:block"></div>
+            <div class="text-right flex items-center gap-4">
+                <div><div class="text-[8px] text-cyan-500/70 uppercase font-bold mb-1 tracking-widest text-right">Live Sync</div><span id="clock" class="text-cyan-400 font-mono text-sm tracking-tighter">00:00:00</span></div>
+                <div onclick="forceRefresh()" class="p-2 border border-white/10 rounded bg-white/5 cursor-pointer hover:bg-white/10 active:scale-95 transition-all"><svg id="refresh-icon" class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></div>
             </div>
-
-            <div id="tab-exposure" class="tab-pane hidden p-8">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
-                    <div>
-                        <h2 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Consolidated Exposure Matrix</h2>
-                        <p class="text-sm text-slate-500">Real-time P&L tracking powered by algorithmic tax strategy generation.</p>
-                    </div>
-                    <div class="bg-[#0f172a] border border-slate-800 rounded-lg p-4 text-right min-w-[200px]">
-                        <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Tracked Assets Value</div>
-                        <div id="total-portfolio-value" class="text-2xl font-mono font-bold text-cyan-400">$0.00</div>
-                    </div>
-                </div>
-                <div class="overflow-x-auto rounded-lg border border-[#1e293b] bg-[#0b1219]">
-                    <table class="w-full text-left border-collapse min-w-[900px]">
-                        <thead>
-                            <tr class="bg-[#0d151d] text-[10px] uppercase tracking-widest text-slate-500 border-b border-[#1e293b]">
-                                <th class="p-5 font-bold">Asset</th>
-                                <th class="p-5 font-bold text-right">Roth Qty</th>
-                                <th class="p-5 font-bold text-right">Ind Qty</th>
-                                <th class="p-5 font-bold text-right">Avg Cost</th>
-                                <th class="p-5 font-bold text-right">Live Price</th>
-                                <th class="p-5 font-bold text-right">Total P&L</th>
-                                <th class="p-5 font-bold text-center">Dynamic Tax Strategy</th>
-                            </tr>
-                        </thead>
-                        <tbody id="exposure-tbody" class="text-sm divide-y divide-[#1e293b]">
-                            <tr><td colspan="7" class="p-8 text-center text-slate-500 italic">Syncing Ledger Data...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="tab-scenarios" class="tab-pane hidden p-8">
-                <h2 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Scenario Mechanics & Price Action Models</h2>
-                <p class="text-sm text-slate-500 mb-8">Detailed breakdown of fundamental triggers and resulting market mechanics.</p>
-                
-                <div class="space-y-6">
-                    <div class="bg-[#111827] border border-white/5 rounded-xl p-6 flex flex-col md:flex-row gap-8">
-                        <div class="md:w-1/3">
-                            <h3 class="text-2xl font-bold text-white">BNO</h3>
-                            <div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-6">U.S. Brent Oil Fund</div>
-                            <div class="text-[10px] text-slate-500 uppercase font-bold mb-1">Live Print</div>
-                            <div class="text-2xl font-mono text-cyan-400 font-bold mb-6" id="scen-bno-live">Syncing...</div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="bg-red-950/30 border border-red-900/50 p-3 rounded"><div class="text-[9px] text-red-500 uppercase font-bold tracking-wider mb-1">Escalation</div><div class="text-lg text-white font-mono">$55.00</div></div>
-                                <div class="bg-emerald-950/30 border border-emerald-900/50 p-3 rounded"><div class="text-[9px] text-emerald-500 uppercase font-bold tracking-wider mb-1">De-escalation</div><div class="text-lg text-white font-mono">$35.00</div></div>
-                            </div>
-                        </div>
-                        <div class="md:w-2/3 space-y-6">
-                            <div class="grid grid-cols-2 gap-6">
-                                <div><div class="flex items-center gap-2 text-[10px] text-red-400 font-bold uppercase tracking-wider mb-2"><span class="text-red-500 border border-red-500 rounded-full w-4 h-4 flex items-center justify-center text-[10px]">!</span> Primary Catalyst</div><p class="text-sm text-slate-400 leading-relaxed">Confirmed deployment of Iranian naval mines or physical damage to a transiting commercial tanker.</p></div>
-                                <div><div class="flex items-center gap-2 text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-2"><span class="text-purple-500">📉</span> Cascading Impact</div><p class="text-sm text-slate-400 leading-relaxed">Insurance markets freeze, effectively blockading the Gulf without a single military shot fired, starving Europe and Asia.</p></div>
-                            </div>
-                            <div class="bg-blue-900/10 border border-blue-500/20 rounded p-4"><div class="flex items-center gap-2 text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2"><span>⚡</span> Price Action Mechanics</div><p class="text-sm text-slate-300 leading-relaxed">Algorithmic buying of crude futures drives the ETF up instantaneously. High contango risks in normal markets are offset by severe backwardation in crisis.</p></div>
-                        </div>
-                    </div>
-
-                    <div class="bg-[#111827] border border-white/5 rounded-xl p-6 flex flex-col md:flex-row gap-8">
-                        <div class="md:w-1/3">
-                            <h3 class="text-2xl font-bold text-white">URNM</h3>
-                            <div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-6">Sprott Uranium Miners</div>
-                            <div class="text-[10px] text-slate-500 uppercase font-bold mb-1">Live Print</div>
-                            <div class="text-2xl font-mono text-cyan-400 font-bold mb-6" id="scen-urnm-live">Syncing...</div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="bg-red-950/30 border border-red-900/50 p-3 rounded"><div class="text-[9px] text-red-500 uppercase font-bold tracking-wider mb-1">Escalation</div><div class="text-lg text-white font-mono">$85.00</div></div>
-                                <div class="bg-emerald-950/30 border border-emerald-900/50 p-3 rounded"><div class="text-[9px] text-emerald-500 uppercase font-bold tracking-wider mb-1">De-escalation</div><div class="text-lg text-white font-mono">$60.00</div></div>
-                            </div>
-                        </div>
-                        <div class="md:w-2/3 space-y-6">
-                            <div class="grid grid-cols-2 gap-6">
-                                <div><div class="flex items-center gap-2 text-[10px] text-red-400 font-bold uppercase tracking-wider mb-2"><span class="text-red-500 border border-red-500 rounded-full w-4 h-4 flex items-center justify-center text-[10px]">!</span> Primary Catalyst</div><p class="text-sm text-slate-400 leading-relaxed">G7/NATO declarations mandating accelerated domestic nuclear buildouts to offset Gulf vulnerability.</p></div>
-                                <div><div class="flex items-center gap-2 text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-2"><span class="text-purple-500">📉</span> Cascading Impact</div><p class="text-sm text-slate-400 leading-relaxed">Utilities scramble to sign long-term supply contracts, driving spot uranium prices to extreme highs as supply dwindles.</p></div>
-                            </div>
-                            <div class="bg-blue-900/10 border border-blue-500/20 rounded p-4"><div class="flex items-center gap-2 text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2"><span>⚡</span> Price Action Mechanics</div><p class="text-sm text-slate-300 leading-relaxed">Inelastic utility demand meets constrained supply. However, highly susceptible to brief algorithmic sell-offs if headlines mention "strikes on nuclear facilities".</p></div>
-                        </div>
-                    </div>
-
-                    <div class="bg-[#111827] border border-white/5 rounded-xl p-6 flex flex-col md:flex-row gap-8">
-                        <div class="md:w-1/3">
-                            <h3 class="text-2xl font-bold text-white">SHLD</h3>
-                            <div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-6">Global X Defense Tech</div>
-                            <div class="text-[10px] text-slate-500 uppercase font-bold mb-1">Live Print</div>
-                            <div class="text-2xl font-mono text-cyan-400 font-bold mb-6" id="scen-shld-live">Syncing...</div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="bg-red-950/30 border border-red-900/50 p-3 rounded"><div class="text-[9px] text-red-500 uppercase font-bold tracking-wider mb-1">Escalation</div><div class="text-lg text-white font-mono">$95.00</div></div>
-                                <div class="bg-emerald-950/30 border border-emerald-900/50 p-3 rounded"><div class="text-[9px] text-emerald-500 uppercase font-bold tracking-wider mb-1">De-escalation</div><div class="text-lg text-white font-mono">$65.00</div></div>
-                            </div>
-                        </div>
-                        <div class="md:w-2/3 space-y-6">
-                            <div class="grid grid-cols-2 gap-6">
-                                <div><div class="flex items-center gap-2 text-[10px] text-red-400 font-bold uppercase tracking-wider mb-2"><span class="text-red-500 border border-red-500 rounded-full w-4 h-4 flex items-center justify-center text-[10px]">!</span> Primary Catalyst</div><p class="text-sm text-slate-400 leading-relaxed">Direct kinetic engagement involving US/Allied naval assets requiring rapid munition depletion.</p></div>
-                                <div><div class="flex items-center gap-2 text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-2"><span class="text-purple-500">📉</span> Cascading Impact</div><p class="text-sm text-slate-400 leading-relaxed">Massive emergency defense appropriations bill passed by Congress to replenish interceptors and autonomous systems.</p></div>
-                            </div>
-                            <div class="bg-blue-900/10 border border-blue-500/20 rounded p-4"><div class="flex items-center gap-2 text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2"><span>⚡</span> Price Action Mechanics</div><p class="text-sm text-slate-300 leading-relaxed">Immediate gap up on defense contractor backlog expansion. High relative strength during broader market sell-offs.</p></div>
-                        </div>
-                    </div>
-
-                    <div class="bg-[#111827] border border-white/5 rounded-xl p-6 flex flex-col md:flex-row gap-8">
-                        <div class="md:w-1/3">
-                            <h3 class="text-2xl font-bold text-white">CEG</h3>
-                            <div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-6">Constellation Energy</div>
-                            <div class="text-[10px] text-slate-500 uppercase font-bold mb-1">Live Print</div>
-                            <div class="text-2xl font-mono text-cyan-400 font-bold mb-6" id="scen-ceg-live">Syncing...</div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="bg-red-950/30 border border-red-900/50 p-3 rounded"><div class="text-[9px] text-red-500 uppercase font-bold tracking-wider mb-1">Escalation</div><div class="text-lg text-white font-mono">$360.00</div></div>
-                                <div class="bg-emerald-950/30 border border-emerald-900/50 p-3 rounded"><div class="text-[9px] text-emerald-500 uppercase font-bold tracking-wider mb-1">De-escalation</div><div class="text-lg text-white font-mono">$290.00</div></div>
-                            </div>
-                        </div>
-                        <div class="md:w-2/3 space-y-6">
-                            <div class="grid grid-cols-2 gap-6">
-                                <div><div class="flex items-center gap-2 text-[10px] text-red-400 font-bold uppercase tracking-wider mb-2"><span class="text-red-500 border border-red-500 rounded-full w-4 h-4 flex items-center justify-center text-[10px]">!</span> Primary Catalyst</div><p class="text-sm text-slate-400 leading-relaxed">Energy crisis cascades into domestic power grid, accelerating government funding for nuclear baseload expansion.</p></div>
-                                <div><div class="flex items-center gap-2 text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-2"><span class="text-purple-500">📉</span> Cascading Impact</div><p class="text-sm text-slate-400 leading-relaxed">Premium valuation applied to carbon-free domestic baseload generation as data center energy demands collide with geopolitical energy scarcity.</p></div>
-                            </div>
-                            <div class="bg-blue-900/10 border border-blue-500/20 rounded p-4"><div class="flex items-center gap-2 text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2"><span>⚡</span> Price Action Mechanics</div><p class="text-sm text-slate-300 leading-relaxed">Steady institutional accumulation. Acts as a high-beta utility play decoupled from Middle East supply shocks.</p></div>
-                        </div>
-                    </div>
-
-                    <div class="bg-[#111827] border border-white/5 rounded-xl p-6 flex flex-col md:flex-row gap-8">
-                        <div class="md:w-1/3">
-                            <h3 class="text-2xl font-bold text-white">OUST</h3>
-                            <div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-6">Ouster Inc.</div>
-                            <div class="text-[10px] text-slate-500 uppercase font-bold mb-1">Live Print</div>
-                            <div class="text-2xl font-mono text-cyan-400 font-bold mb-6" id="scen-oust-live">Syncing...</div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="bg-red-950/30 border border-red-900/50 p-3 rounded"><div class="text-[9px] text-red-500 uppercase font-bold tracking-wider mb-1">Escalation</div><div class="text-lg text-white font-mono">$32.00</div></div>
-                                <div class="bg-emerald-950/30 border border-emerald-900/50 p-3 rounded"><div class="text-[9px] text-emerald-500 uppercase font-bold tracking-wider mb-1">De-escalation</div><div class="text-lg text-white font-mono">$16.00</div></div>
-                            </div>
-                        </div>
-                        <div class="md:w-2/3 space-y-6">
-                            <div class="grid grid-cols-2 gap-6">
-                                <div><div class="flex items-center gap-2 text-[10px] text-red-400 font-bold uppercase tracking-wider mb-2"><span class="text-red-500 border border-red-500 rounded-full w-4 h-4 flex items-center justify-center text-[10px]">!</span> Primary Catalyst</div><p class="text-sm text-slate-400 leading-relaxed">DoD announces accelerated procurement of autonomous defense platforms and perimeter security systems.</p></div>
-                                <div><div class="flex items-center gap-2 text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-2"><span class="text-purple-500">📉</span> Cascading Impact</div><p class="text-sm text-slate-400 leading-relaxed">Shift from R&D to mass production phase for lidar components, significantly boosting high-margin hardware revenue.</p></div>
-                            </div>
-                            <div class="bg-blue-900/10 border border-blue-500/20 rounded p-4"><div class="flex items-center gap-2 text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2"><span>⚡</span> Price Action Mechanics</div><p class="text-sm text-slate-300 leading-relaxed">High beta tech growth profile. Squeezes rapidly on contract announcements but vulnerable to broader tech drawdowns.</p></div>
-                        </div>
-                    </div>
-
-                    <div class="bg-[#111827] border border-white/5 rounded-xl p-6 flex flex-col md:flex-row gap-8">
-                        <div class="md:w-1/3">
-                            <h3 class="text-2xl font-bold text-white">MLPX</h3>
-                            <div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-6">Global X MLP & Infra</div>
-                            <div class="text-[10px] text-slate-500 uppercase font-bold mb-1">Live Print</div>
-                            <div class="text-2xl font-mono text-cyan-400 font-bold mb-6" id="scen-mlpx-live">Syncing...</div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="bg-red-950/30 border border-red-900/50 p-3 rounded"><div class="text-[9px] text-red-500 uppercase font-bold tracking-wider mb-1">Escalation</div><div class="text-lg text-white font-mono">$85.00</div></div>
-                                <div class="bg-emerald-950/30 border border-emerald-900/50 p-3 rounded"><div class="text-[9px] text-emerald-500 uppercase font-bold tracking-wider mb-1">De-escalation</div><div class="text-lg text-white font-mono">$65.00</div></div>
-                            </div>
-                        </div>
-                        <div class="md:w-2/3 space-y-6">
-                            <div class="grid grid-cols-2 gap-6">
-                                <div><div class="flex items-center gap-2 text-[10px] text-red-400 font-bold uppercase tracking-wider mb-2"><span class="text-red-500 border border-red-500 rounded-full w-4 h-4 flex items-center justify-center text-[10px]">!</span> Primary Catalyst</div><p class="text-sm text-slate-400 leading-relaxed">Sustained blockade of the Strait of Hormuz forces Europe to rely entirely on US LNG and domestic exports.</p></div>
-                                <div><div class="flex items-center gap-2 text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-2"><span class="text-purple-500">📉</span> Cascading Impact</div><p class="text-sm text-slate-400 leading-relaxed">Pipeline utilization maxes out, driving up tolling rates and accelerating dividend distributions for midstream operators.</p></div>
-                            </div>
-                            <div class="bg-blue-900/10 border border-blue-500/20 rounded p-4"><div class="flex items-center gap-2 text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2"><span>⚡</span> Price Action Mechanics</div><p class="text-sm text-slate-300 leading-relaxed">Slow, steady yield-driven appreciation. Low volatility anchor for the portfolio during extreme market fear.</p></div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div id="tab-financials" class="tab-pane hidden p-8">
-                <h2 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Financial Projections Matrix</h2>
-                <p class="text-sm text-slate-500 mb-8">Account-segmented impact modeling based on target price scenarios.</p>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-[#111827] border border-slate-700 rounded-xl p-6 border-t-4 border-t-blue-500">
-                        <div class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-2">Current Base Case</div>
-                        <div class="text-3xl font-mono text-white font-bold mb-4" id="proj-base-total">$0.00</div>
-                        <div class="text-[11px] text-slate-500 font-mono">Live dynamic valuation</div>
-                    </div>
-                    <div class="bg-[#111827] border border-slate-700 rounded-xl p-6 border-t-4 border-t-red-500">
-                        <div class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-2">Max Escalation (+30% Target)</div>
-                        <div class="text-3xl font-mono text-white font-bold mb-1" id="proj-esc-total">$0.00</div>
-                        <div class="text-sm font-mono text-red-500 font-bold mb-3" id="proj-esc-diff">+$0.00</div>
-                        <div class="text-[11px] text-slate-500 font-mono">Blockade / Kinetic Expansion</div>
-                    </div>
-                    <div class="bg-[#111827] border border-slate-700 rounded-xl p-6 border-t-4 border-t-emerald-500">
-                        <div class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-2">De-Escalation (-15% Target)</div>
-                        <div class="text-3xl font-mono text-white font-bold mb-1" id="proj-desc-total">$0.00</div>
-                        <div class="text-sm font-mono text-emerald-500 font-bold mb-3" id="proj-desc-diff">-$0.00</div>
-                        <div class="text-[11px] text-slate-500 font-mono">Ceasefire / Normalization</div>
-                    </div>
-                </div>
-
-                <div class="bg-[#111827] border border-[#1e293b] rounded-xl overflow-hidden">
-                    <div class="grid grid-cols-4 bg-[#0d151d] border-b border-[#1e293b]">
-                        <div class="p-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Asset Segment</div>
-                        <div class="p-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center border-l border-[#1e293b]">Current Value</div>
-                        <div class="p-4 text-[10px] font-bold text-red-500 uppercase tracking-widest text-center border-l border-[#1e293b] bg-red-950/20">Target: +30%</div>
-                        <div class="p-4 text-[10px] font-bold text-emerald-500 uppercase tracking-widest text-center border-l border-[#1e293b] bg-emerald-950/20">Target: -15%</div>
-                    </div>
-                    <div id="financials-tbody" class="divide-y divide-[#1e293b]">
-                        <div class="p-8 text-center text-slate-500 italic">Syncing live values...</div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab-tactical" class="tab-pane hidden p-8">
-                <h2 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Tactical Time Horizon Playbook</h2>
-                <p class="text-sm text-slate-500 mb-8">Execution strategies, tax optimization, and precise indicators across multiple timeframes.</p>
-
-                <div class="border-l border-[#1e293b] ml-4 pl-8 space-y-12 pb-8 relative">
-                    <div class="relative timeline-node">
-                        <div class="flex items-center gap-4 mb-4">
-                            <span class="bg-cyan-900/30 text-cyan-400 border border-cyan-500/30 text-[10px] font-bold uppercase px-3 py-1 rounded">Hourly</span>
-                            <h3 class="text-xl font-bold text-white">The "Headline Algo" Phase</h3>
-                        </div>
-                        <div class="bg-[#111827] border border-[#1e293b] rounded-xl p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div>
-                                <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-2">Market Landscape</div>
-                                <p class="text-sm text-slate-300 leading-relaxed mb-6">Markets reacting violently to unverified reports, CENTCOM press releases, and intelligence leaks on social media and Bloomberg terminals. High noise-to-signal ratio.</p>
-                                <div class="bg-orange-500/10 border border-orange-500/20 rounded p-4">
-                                    <div class="flex items-center gap-2 text-[10px] text-orange-400 font-bold uppercase tracking-wider mb-2"><span>🎯</span> Execution Strategy</div>
-                                    <p class="text-sm text-slate-300">Do not execute market orders. Algorithms will hunt liquidity and give you terrible fills. Utilize tight trailing stops on profitable positions. Rely strictly on limit orders.</p>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="bg-blue-900/10 border border-blue-500/20 rounded p-4 mb-6">
-                                    <div class="flex items-center gap-2 text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2"><span>📘</span> Tax Optimization Play</div>
-                                    <p class="text-sm text-slate-300">Utilize Roth IRA for any rapid intraday scalping to avoid generating massive short-term capital gains tax liabilities.</p>
-                                </div>
-                                <div>
-                                    <div class="flex items-center gap-2 text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-3"><span>📈</span> Key Indicators to Watch</div>
-                                    <ul class="text-sm text-slate-400 space-y-2 list-disc pl-4">
-                                        <li>VIX Intraday Spikes</li>
-                                        <li>Twitter/X OSINT accounts</li>
-                                        <li>Oil Futures (Minute Charts)</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative timeline-node">
-                        <div class="flex items-center gap-4 mb-4">
-                            <span class="bg-cyan-900/30 text-cyan-400 border border-cyan-500/30 text-[10px] font-bold uppercase px-3 py-1 rounded">Daily</span>
-                            <h3 class="text-xl font-bold text-white">The Physical Supply Reality</h3>
-                        </div>
-                        <div class="bg-[#111827] border border-[#1e293b] rounded-xl p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div>
-                                <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-2">Market Landscape</div>
-                                <p class="text-sm text-slate-300 leading-relaxed mb-6">The narrative shifts from military strikes to logistics. The focus is on maritime insurance rates, tanker reroutes via the Cape of Good Hope, and physical barrel shortages.</p>
-                            </div>
-                            <div>
-                                <div class="bg-blue-900/10 border border-blue-500/20 rounded p-4">
-                                    <div class="flex items-center gap-2 text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2"><span>📘</span> Tax Optimization Play</div>
-                                    <p class="text-sm text-slate-300">Identify Individual Brokerage losers (e.g. $CEG dragging) to prep for Tax-Loss Harvesting against your energy gains.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 
-    <script>
-        // 1. DATA LINKS
-        const MAIN_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSSHPSKPENsvV4nIteNVeKtUovjDtc_GDGctm_yoTPIK2NtniBn-iKX30Oy0gxBxPiLA3fDtCmSf-SV/pub?gid=0&single=true&output=csv';
-        const LEDGER_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSSHPSKPENsvV4nIteNVeKtUovjDtc_GDGctm_yoTPIK2NtniBn-iKX30Oy0gxBxPiLA3fDtCmSf-SV/pub?gid=353907484&single=true&output=csv';
+    <div class="flex border-b border-[#1e293b] bg-[#0d151d] overflow-x-auto scrollbar-hide shrink-0">
+        <button onclick="openTab('tab-situation')" id="btn-tab-situation" class="tab-btn tab-active px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2"><svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg> Situation Report</button>
+        <button onclick="openTab('tab-holdings')" id="btn-tab-holdings" class="tab-btn tab-inactive px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2"><svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg> Holdings Background</button>
+        <button onclick="openTab('tab-exposure')" id="btn-tab-exposure" class="tab-btn tab-inactive px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2"><svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg> Exposure Matrix</button>
+        <button onclick="openTab('tab-scenarios')" id="btn-tab-scenarios" class="tab-btn tab-inactive px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2"><svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg> Scenario Mechanics</button>
+        <button onclick="openTab('tab-financials')" id="btn-tab-financials" class="tab-btn tab-inactive px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2"><svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg> Financial Projections</button>
+        <button onclick="openTab('tab-tactical')" id="btn-tab-tactical" class="tab-btn tab-inactive px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2"><svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg> Tactical Horizons</button>
+    </div>
 
-        const CATEGORY_MAP = {
-            'BNO': 'ENERGY/COMMODITY', 'URNM': 'NUCLEAR MATERIALS', 
-            'SHLD': 'DEFENSE INDUSTRIALS', 'CEG': 'DOMESTIC UTILITIES', 
-            'MLPX': 'DOMESTIC MIDSTREAM', 'MPLX': 'DOMESTIC MIDSTREAM',
-            'OUST': 'FRONTIER TECH'
-        };
+    <div class="flex-grow bg-[#0b1219] relative">
+        <div id="tab-situation" class="tab-pane block h-full flex flex-col">
+            <div class="grid grid-cols-1 lg:grid-cols-3 flex-grow">
+                <div class="lg:col-span-2 p-8 border-r border-[#1e293b]">
+                    <h2 class="text-sm font-bold text-white mb-8 flex items-center gap-2 uppercase tracking-wide"><span class="text-orange-500">⚠️</span> Real-Time Intelligence Sweep</h2>
+                    <div class="border-l border-[#1e293b] ml-3 pl-6 space-y-6 relative max-h-[500px] overflow-y-auto scrollbar-hide" id="intel-container">
+                        <p class="text-slate-500 italic">Establishing secure connection...</p>
+                    </div>
+                </div>
+                <div class="p-8 bg-[#0a1017]">
+                    <h2 class="text-sm font-bold text-white mb-8 flex items-center gap-2 uppercase tracking-wide"><svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg> Active Asset Tracking</h2>
+                    <div id="asset-container" class="space-y-4"></div>
+                </div>
+            </div>
+            <div class="p-8 border-t border-[#1e293b] bg-[#0d151d]">
+                <h3 class="text-[12px] font-bold text-white mb-3 flex items-center gap-2 tracking-wide uppercase"><span class="text-cyan-500">🌐</span> Strategic Assessment</h3>
+                <p id="dynamic-assessment" class="text-sm text-slate-400 leading-relaxed max-w-6xl">The current threat environment is characterized by extreme tail risks stemming from asymmetric naval warfare in the Strait of Hormuz. The portfolio must be defensively positioned to capture sudden spikes in the geopolitical risk premium ($BNO, $LNG) while maintaining structural allocations to long-term sovereign security themes ($URNM, $CEG, $SHLD). Tax-advantaged accounts should be utilized for aggressive rebalancing to avoid short-term capital gains drag during this high-volatility window.</p>
+            </div>
+        </div>
 
-        let livePrices = {}; 
+        <div id="tab-holdings" class="tab-pane hidden p-8">
+            <h2 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Holdings Background & Geopolitical Relevance</h2>
+            <p class="text-sm text-slate-500 mb-8">Fundamental analysis justifying portfolio inclusion against the backdrop of Operation Epic Fury.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-[#111827] border border-white/5 rounded-xl p-6"><div class="flex items-center gap-4 mb-4"><div class="bg-white/5 px-3 py-1.5 rounded text-white font-bold text-lg">BNO</div><div><div class="text-white font-bold text-sm">U.S. Brent Oil Fund</div><div class="text-[10px] text-cyan-400 uppercase tracking-widest font-bold">Energy/Commodity</div></div></div><p class="text-sm text-slate-400 leading-relaxed mb-6">Tracks daily price movements of Brent crude oil. Uniquely sensitive to Middle Eastern geopolitical shocks with a massive "fear premium" during maritime conflicts.</p><div class="bg-black/30 p-4 rounded-lg border border-white/5 flex gap-3"><span class="text-orange-500">⚡</span><div><div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Strategic Value</div><div class="text-sm text-slate-300">Direct proxy for global crude. Immediate beneficiary of Hormuz blockade threat.</div></div></div></div>
+                <div class="bg-[#111827] border border-white/5 rounded-xl p-6"><div class="flex items-center gap-4 mb-4"><div class="bg-white/5 px-3 py-1.5 rounded text-white font-bold text-lg">URNM</div><div><div class="text-white font-bold text-sm">Sprott Uranium Miners</div><div class="text-[10px] text-cyan-400 uppercase tracking-widest font-bold">Nuclear Materials</div></div></div><p class="text-sm text-slate-400 leading-relaxed mb-6">Provides exposure to global uranium miners. Structural deficit in uranium supply colliding with Western mandate to decouple from adversarial energy sources.</p><div class="bg-black/30 p-4 rounded-lg border border-white/5 flex gap-3"><span class="text-orange-500">⚡</span><div><div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Strategic Value</div><div class="text-sm text-slate-300">Strategic energy independence. Benefiting from Western pivot away from ME energy.</div></div></div></div>
+                <div class="bg-[#111827] border border-white/5 rounded-xl p-6"><div class="flex items-center gap-4 mb-4"><div class="bg-white/5 px-3 py-1.5 rounded text-white font-bold text-lg">SHLD</div><div><div class="text-white font-bold text-sm">Global X Defense Tech</div><div class="text-[10px] text-cyan-400 uppercase tracking-widest font-bold">Defense Industrials</div></div></div><p class="text-sm text-slate-400 leading-relaxed mb-6">Focuses on defense tech and cybersecurity. Capturing backlog orders as Operation Epic Fury burns through expensive interceptors and drones.</p><div class="bg-black/30 p-4 rounded-lg border border-white/5 flex gap-3"><span class="text-orange-500">⚡</span><div><div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Strategic Value</div><div class="text-sm text-slate-300">Defense replenishment. Captures munitions burn rate of kinetic conflict.</div></div></div></div>
+                <div class="bg-[#111827] border border-white/5 rounded-xl p-6"><div class="flex items-center gap-4 mb-4"><div class="bg-white/5 px-3 py-1.5 rounded text-white font-bold text-lg">CEG</div><div><div class="text-white font-bold text-sm">Constellation Energy</div><div class="text-[10px] text-cyan-400 uppercase tracking-widest font-bold">Domestic Utilities</div></div></div><p class="text-sm text-slate-400 leading-relaxed mb-6">Largest producer of carbon-free nuclear energy in the U.S. Total insulation from Middle East supply shocks and structurally critical for AI data centers.</p><div class="bg-black/30 p-4 rounded-lg border border-white/5 flex gap-3"><span class="text-orange-500">⚡</span><div><div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Strategic Value</div><div class="text-sm text-slate-300">Domestic baseload power. Insulated from global supply shocks, tied to US grid.</div></div></div></div>
+                <div class="bg-[#111827] border border-white/5 rounded-xl p-6"><div class="flex items-center gap-4 mb-4"><div class="bg-white/5 px-3 py-1.5 rounded text-white font-bold text-lg">OUST</div><div><div class="text-white font-bold text-sm">Ouster Inc.</div><div class="text-[10px] text-cyan-400 uppercase tracking-widest font-bold">Frontier Tech</div></div></div><p class="text-sm text-slate-400 leading-relaxed mb-6">Develops high-res lidar sensors crucial for autonomous systems and defense infrastructure. Essential vision hardware for next-gen military systems.</p><div class="bg-black/30 p-4 rounded-lg border border-white/5 flex gap-3"><span class="text-orange-500">⚡</span><div><div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Strategic Value</div><div class="text-sm text-slate-300">Critical infrastructure tech. Leveraged to defense autonomy modernization.</div></div></div></div>
+                <div class="bg-[#111827] border border-white/5 rounded-xl p-6"><div class="flex items-center gap-4 mb-4"><div class="bg-white/5 px-3 py-1.5 rounded text-white font-bold text-lg">MLPX</div><div><div class="text-white font-bold text-sm">Global X MLP & Infra</div><div class="text-[10px] text-cyan-400 uppercase tracking-widest font-bold">Domestic Midstream</div></div></div><p class="text-sm text-slate-400 leading-relaxed mb-6">Provides exposure to U.S. midstream energy infrastructure. As ME supply chains are threatened, domestic energy logistics become paramount.</p><div class="bg-black/30 p-4 rounded-lg border border-white/5 flex gap-3"><span class="text-orange-500">⚡</span><div><div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Strategic Value</div><div class="text-sm text-slate-300">Domestic energy security. High-yield defensive play insulated from maritime risks.</div></div></div></div>
+            </div>
+        </div>
 
-        // 2. SVG ASSETS
-        const SVG_UP = `<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>`;
-        const SVG_DOWN = `<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"></path></svg>`;
+        <div id="tab-exposure" class="tab-pane hidden p-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+                <div><h2 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Consolidated Exposure Matrix</h2><p class="text-sm text-slate-500">Real-time P&L tracking powered by algorithmic tax strategy generation.</p></div>
+                <div class="bg-[#0f172a] border border-slate-800 rounded-lg p-4 text-right min-w-[200px]">
+                    <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Tracked Assets Value</div><div id="total-portfolio-value" class="text-2xl font-mono font-bold text-cyan-400">$0.00</div>
+                </div>
+            </div>
+            <div class="overflow-x-auto rounded-lg border border-[#1e293b] bg-[#0b1219]">
+                <table class="w-full text-left border-collapse min-w-[900px]">
+                    <thead>
+                        <tr class="bg-[#0d151d] text-[10px] uppercase tracking-widest text-slate-500 border-b border-[#1e293b]">
+                            <th class="p-5 font-bold">Asset</th><th class="p-5 font-bold text-right">Roth Qty</th><th class="p-5 font-bold text-right">Ind Qty</th>
+                            <th class="p-5 font-bold text-right">Avg Cost</th><th class="p-5 font-bold text-right">Live Price</th><th class="p-5 font-bold text-right">Total P&L</th><th class="p-5 font-bold text-center">Dynamic Tax Strategy</th>
+                        </tr>
+                    </thead>
+                    <tbody id="exposure-tbody" class="text-sm divide-y divide-[#1e293b]"><tr><td colspan="7" class="p-8 text-center text-slate-500 italic">Syncing Ledger Data...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
 
-        // 3. TAB ENGINE
-        function openTab(tabId) {
-            document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => {
-                el.classList.remove('tab-active'); el.classList.add('tab-inactive');
+        <div id="tab-scenarios" class="tab-pane hidden p-8">
+            <h2 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Scenario Mechanics & Price Action Models</h2>
+            <p class="text-sm text-slate-500 mb-8">Detailed breakdown of fundamental triggers and resulting market mechanics.</p>
+            <div class="space-y-6">
+                <div class="bg-[#111827] border border-white/5 rounded-xl p-6 flex flex-col md:flex-row gap-8"><div class="md:w-1/3"><h3 class="text-2xl font-bold text-white">BNO</h3><div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-6">U.S. Brent Oil Fund</div><div class="text-[10px] text-slate-500 uppercase font-bold mb-1">Live Print</div><div class="text-2xl font-mono text-cyan-400 font-bold mb-6" id="scen-bno-live">Syncing...</div><div class="grid grid-cols-2 gap-4"><div class="bg-red-950/30 border border-red-900/50 p-3 rounded"><div class="text-[9px] text-red-500 uppercase font-bold tracking-wider mb-1">Escalation</div><div class="text-lg text-white font-mono">$55.00</div></div><div class="bg-emerald-950/30 border border-emerald-900/50 p-3 rounded"><div class="text-[9px] text-emerald-500 uppercase font-bold tracking-wider mb-1">De-escalation</div><div class="text-lg text-white font-mono">$35.00</div></div></div></div><div class="md:w-2/3 space-y-6"><div class="grid grid-cols-2 gap-6"><div><div class="flex items-center gap-2 text-[10px] text-red-400 font-bold uppercase tracking-wider mb-2"><span class="text-red-500 border border-red-500 rounded-full w-4 h-4 flex items-center justify-center text-[10px]">!</span> Primary Catalyst</div><p class="text-sm text-slate-400 leading-relaxed">Confirmed deployment of Iranian naval mines or physical damage to a transiting commercial tanker.</p></div><div><div class="flex items-center gap-2 text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-2"><span class="text-purple-500">📉</span> Cascading Impact</div><p class="text-sm text-slate-400 leading-relaxed">Insurance markets freeze, effectively blockading the Gulf without a single military shot fired, starving Europe and Asia.</p></div></div><div class="bg-blue-900/10 border border-blue-500/20 rounded p-4"><div class="flex items-center gap-2 text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2"><span>⚡</span> Price Action Mechanics</div><p class="text-sm text-slate-300 leading-relaxed">Algorithmic buying of crude futures drives the ETF up instantaneously. High contango risks in normal markets are offset by severe backwardation in crisis.</p></div></div></div>
+                <div class="bg-[#111827] border border-white/5 rounded-xl p-6 flex flex-col md:flex-row gap-8"><div class="md:w-1/3"><h3 class="text-2xl font-bold text-white">URNM</h3><div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-6">Sprott Uranium Miners</div><div class="text-[10px] text-slate-500 uppercase font-bold mb-1">Live Print</div><div class="text-2xl font-mono text-cyan-400 font-bold mb-6" id="scen-urnm-live">Syncing...</div><div class="grid grid-cols-2 gap-4"><div class="bg-red-950/30 border border-red-900/50 p-3 rounded"><div class="text-[9px] text-red-500 uppercase font-bold tracking-wider mb-1">Escalation</div><div class="text-lg text-white font-mono">$85.00</div></div><div class="bg-emerald-950/30 border border-emerald-900/50 p-3 rounded"><div class="text-[9px] text-emerald-500 uppercase font-bold tracking-wider mb-1">De-escalation</div><div class="text-lg text-white font-mono">$60.00</div></div></div></div><div class="md:w-2/3 space-y-6"><div class="grid grid-cols-2 gap-6"><div><div class="flex items-center gap-2 text-[10px] text-red-400 font-bold uppercase tracking-wider mb-2"><span class="text-red-500 border border-red-500 rounded-full w-4 h-4 flex items-center justify-center text-[10px]">!</span> Primary Catalyst</div><p class="text-sm text-slate-400 leading-relaxed">G7/NATO declarations mandating accelerated domestic nuclear buildouts to offset Gulf vulnerability.</p></div><div><div class="flex items-center gap-2 text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-2"><span class="text-purple-500">📉</span> Cascading Impact</div><p class="text-sm text-slate-400 leading-relaxed">Utilities scramble to sign long-term supply contracts, driving spot uranium prices to extreme highs as supply dwindles.</p></div></div><div class="bg-blue-900/10 border border-blue-500/20 rounded p-4"><div class="flex items-center gap-2 text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2"><span>⚡</span> Price Action Mechanics</div><p class="text-sm text-slate-300 leading-relaxed">Inelastic utility demand meets constrained supply. However, highly susceptible to brief algorithmic sell-offs if headlines mention "strikes on nuclear facilities".</p></div></div></div>
+                <div class="bg-[#111827] border border-white/5 rounded-xl p-6 flex flex-col md:flex-row gap-8"><div class="md:w-1/3"><h3 class="text-2xl font-bold text-white">SHLD</h3><div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-6">Global X Defense Tech</div><div class="text-[10px] text-slate-500 uppercase font-bold mb-1">Live Print</div><div class="text-2xl font-mono text-cyan-400 font-bold mb-6" id="scen-shld-live">Syncing...</div><div class="grid grid-cols-2 gap-4"><div class="bg-red-950/30 border border-red-900/50 p-3 rounded"><div class="text-[9px] text-red-500 uppercase font-bold tracking-wider mb-1">Escalation</div><div class="text-lg text-white font-mono">$95.00</div></div><div class="bg-emerald-950/30 border border-emerald-900/50 p-3 rounded"><div class="text-[9px] text-emerald-500 uppercase font-bold tracking-wider mb-1">De-escalation</div><div class="text-lg text-white font-mono">$65.00</div></div></div></div><div class="md:w-2/3 space-y-6"><div class="grid grid-cols-2 gap-6"><div><div class="flex items-center gap-2 text-[10px] text-red-400 font-bold uppercase tracking-wider mb-2"><span class="text-red-500 border border-red-500 rounded-full w-4 h-4 flex items-center justify-center text-[10px]">!</span> Primary Catalyst</div><p class="text-sm text-slate-400 leading-relaxed">Direct kinetic engagement involving US/Allied naval assets requiring rapid munition depletion.</p></div><div><div class="flex items-center gap-2 text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-2"><span class="text-purple-500">📉</span> Cascading Impact</div><p class="text-sm text-slate-400 leading-relaxed">Massive emergency defense appropriations bill passed by Congress to replenish interceptors and autonomous systems.</p></div></div><div class="bg-blue-900/10 border border-blue-500/20 rounded p-4"><div class="flex items-center gap-2 text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2"><span>⚡</span> Price Action Mechanics</div><p class="text-sm text-slate-300 leading-relaxed">Immediate gap up on defense contractor backlog expansion. High relative strength during broader market sell-offs.</p></div></div></div>
+                <div class="bg-[#111827] border border-white/5 rounded-xl p-6 flex flex-col md:flex-row gap-8"><div class="md:w-1/3"><h3 class="text-2xl font-bold text-white">CEG</h3><div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-6">Constellation Energy</div><div class="text-[10px] text-slate-500 uppercase font-bold mb-1">Live Print</div><div class="text-2xl font-mono text-cyan-400 font-bold mb-6" id="scen-ceg-live">Syncing...</div><div class="grid grid-cols-2 gap-4"><div class="bg-red-950/30 border border-red-900/50 p-3 rounded"><div class="text-[9px] text-red-500 uppercase font-bold tracking-wider mb-1">Escalation</div><div class="text-lg text-white font-mono">$360.00</div></div><div class="bg-emerald-950/30 border border-emerald-900/50 p-3 rounded"><div class="text-[9px] text-emerald-500 uppercase font-bold tracking-wider mb-1">De-escalation</div><div class="text-lg text-white font-mono">$290.00</div></div></div></div><div class="md:w-2/3 space-y-6"><div class="grid grid-cols-2 gap-6"><div><div class="flex items-center gap-2 text-[10px] text-red-400 font-bold uppercase tracking-wider mb-2"><span class="text-red-500 border border-red-500 rounded-full w-4 h-4 flex items-center justify-center text-[10px]">!</span> Primary Catalyst</div><p class="text-sm text-slate-400 leading-relaxed">Energy crisis cascades into domestic power grid, accelerating government funding for nuclear baseload expansion.</p></div><div><div class="flex items-center gap-2 text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-2"><span class="text-purple-500">📉</span> Cascading Impact</div><p class="text-sm text-slate-400 leading-relaxed">Premium valuation applied to carbon-free domestic baseload generation as data center energy demands collide with geopolitical energy scarcity.</p></div></div><div class="bg-blue-900/10 border border-blue-500/20 rounded p-4"><div class="flex items-center gap-2 text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2"><span>⚡</span> Price Action Mechanics</div><p class="text-sm text-slate-300 leading-relaxed">Steady institutional accumulation. Acts as a high-beta utility play decoupled from Middle East supply shocks.</p></div></div></div>
+                <div class="bg-[#111827] border border-white/5 rounded-xl p-6 flex flex-col md:flex-row gap-8"><div class="md:w-1/3"><h3 class="text-2xl font-bold text-white">OUST</h3><div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-6">Ouster Inc.</div><div class="text-[10px] text-slate-500 uppercase font-bold mb-1">Live Print</div><div class="text-2xl font-mono text-cyan-400 font-bold mb-6" id="scen-oust-live">Syncing...</div><div class="grid grid-cols-2 gap-4"><div class="bg-red-950/30 border border-red-900/50 p-3 rounded"><div class="text-[9px] text-red-500 uppercase font-bold tracking-wider mb-1">Escalation</div><div class="text-lg text-white font-mono">$32.00</div></div><div class="bg-emerald-950/30 border border-emerald-900/50 p-3 rounded"><div class="text-[9px] text-emerald-500 uppercase font-bold tracking-wider mb-1">De-escalation</div><div class="text-lg text-white font-mono">$16.00</div></div></div></div><div class="md:w-2/3 space-y-6"><div class="grid grid-cols-2 gap-6"><div><div class="flex items-center gap-2 text-[10px] text-red-400 font-bold uppercase tracking-wider mb-2"><span class="text-red-500 border border-red-500 rounded-full w-4 h-4 flex items-center justify-center text-[10px]">!</span> Primary Catalyst</div><p class="text-sm text-slate-400 leading-relaxed">DoD announces accelerated procurement of autonomous defense platforms and perimeter security systems.</p></div><div><div class="flex items-center gap-2 text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-2"><span class="text-purple-500">📉</span> Cascading Impact</div><p class="text-sm text-slate-400 leading-relaxed">Shift from R&D to mass production phase for lidar components, significantly boosting high-margin hardware revenue.</p></div></div><div class="bg-blue-900/10 border border-blue-500/20 rounded p-4"><div class="flex items-center gap-2 text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2"><span>⚡</span> Price Action Mechanics</div><p class="text-sm text-slate-300 leading-relaxed">High beta tech growth profile. Squeezes rapidly on contract announcements but vulnerable to broader tech drawdowns.</p></div></div></div>
+                <div class="bg-[#111827] border border-white/5 rounded-xl p-6 flex flex-col md:flex-row gap-8"><div class="md:w-1/3"><h3 class="text-2xl font-bold text-white">MLPX</h3><div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-6">Global X MLP & Infra</div><div class="text-[10px] text-slate-500 uppercase font-bold mb-1">Live Print</div><div class="text-2xl font-mono text-cyan-400 font-bold mb-6" id="scen-mlpx-live">Syncing...</div><div class="grid grid-cols-2 gap-4"><div class="bg-red-950/30 border border-red-900/50 p-3 rounded"><div class="text-[9px] text-red-500 uppercase font-bold tracking-wider mb-1">Escalation</div><div class="text-lg text-white font-mono">$85.00</div></div><div class="bg-emerald-950/30 border border-emerald-900/50 p-3 rounded"><div class="text-[9px] text-emerald-500 uppercase font-bold tracking-wider mb-1">De-escalation</div><div class="text-lg text-white font-mono">$65.00</div></div></div></div><div class="md:w-2/3 space-y-6"><div class="grid grid-cols-2 gap-6"><div><div class="flex items-center gap-2 text-[10px] text-red-400 font-bold uppercase tracking-wider mb-2"><span class="text-red-500 border border-red-500 rounded-full w-4 h-4 flex items-center justify-center text-[10px]">!</span> Primary Catalyst</div><p class="text-sm text-slate-400 leading-relaxed">Sustained blockade of the Strait of Hormuz forces Europe to rely entirely on US LNG and domestic exports.</p></div><div><div class="flex items-center gap-2 text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-2"><span class="text-purple-500">📉</span> Cascading Impact</div><p class="text-sm text-slate-400 leading-relaxed">Pipeline utilization maxes out, driving up tolling rates and accelerating dividend distributions for midstream operators.</p></div></div><div class="bg-blue-900/10 border border-blue-500/20 rounded p-4"><div class="flex items-center gap-2 text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2"><span>⚡</span> Price Action Mechanics</div><p class="text-sm text-slate-300 leading-relaxed">Slow, steady yield-driven appreciation. Low volatility anchor for the portfolio during extreme market fear.</p></div></div></div>
+            </div>
+        </div>
+
+        <div id="tab-financials" class="tab-pane hidden p-8">
+            <h2 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Financial Projections Matrix</h2>
+            <p class="text-sm text-slate-500 mb-8">Account-segmented impact modeling based on target price scenarios.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-[#111827] border border-slate-700 rounded-xl p-6 border-t-4 border-t-blue-500"><div class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-2">Current Base Case</div><div class="text-3xl font-mono text-white font-bold mb-4" id="proj-base-total">$0.00</div><div class="text-[11px] text-slate-500 font-mono">Live dynamic valuation</div></div>
+                <div class="bg-[#111827] border border-slate-700 rounded-xl p-6 border-t-4 border-t-red-500"><div class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-2">Max Escalation (+30% Target)</div><div class="text-3xl font-mono text-white font-bold mb-1" id="proj-esc-total">$0.00</div><div class="text-sm font-mono text-red-500 font-bold mb-3" id="proj-esc-diff">+$0.00</div><div class="text-[11px] text-slate-500 font-mono">Blockade / Kinetic Expansion</div></div>
+                <div class="bg-[#111827] border border-slate-700 rounded-xl p-6 border-t-4 border-t-emerald-500"><div class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mb-2">De-Escalation (-15% Target)</div><div class="text-3xl font-mono text-white font-bold mb-1" id="proj-desc-total">$0.00</div><div class="text-sm font-mono text-emerald-500 font-bold mb-3" id="proj-desc-diff">-$0.00</div><div class="text-[11px] text-slate-500 font-mono">Ceasefire / Normalization</div></div>
+            </div>
+            <div class="bg-[#111827] border border-[#1e293b] rounded-xl overflow-hidden">
+                <div class="grid grid-cols-4 bg-[#0d151d] border-b border-[#1e293b]">
+                    <div class="p-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Asset Segment</div><div class="p-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-center border-l border-[#1e293b]">Current Value</div><div class="p-4 text-[10px] font-bold text-red-500 uppercase tracking-widest text-center border-l border-[#1e293b] bg-red-950/20">Target: +30%</div><div class="p-4 text-[10px] font-bold text-emerald-500 uppercase tracking-widest text-center border-l border-[#1e293b] bg-emerald-950/20">Target: -15%</div>
+                </div>
+                <div id="financials-tbody" class="divide-y divide-[#1e293b]"><div class="p-8 text-center text-slate-500 italic">Syncing live values...</div></div>
+            </div>
+        </div>
+
+        <div id="tab-tactical" class="tab-pane hidden p-8">
+            <h2 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Tactical Time Horizon Playbook</h2>
+            <p class="text-sm text-slate-500 mb-8">Execution strategies, tax optimization, and precise indicators across multiple timeframes.</p>
+            <div class="border-l border-[#1e293b] ml-4 pl-8 space-y-12 pb-8 relative">
+                <div class="relative timeline-node">
+                    <div class="flex items-center gap-4 mb-4"><span class="bg-cyan-900/30 text-cyan-400 border border-cyan-500/30 text-[10px] font-bold uppercase px-3 py-1 rounded">Hourly</span><h3 class="text-xl font-bold text-white">The "Headline Algo" Phase</h3></div>
+                    <div class="bg-[#111827] border border-[#1e293b] rounded-xl p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div><div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-2">Market Landscape</div><p class="text-sm text-slate-300 leading-relaxed mb-6">Markets reacting violently to unverified reports, CENTCOM press releases, and intelligence leaks on social media and Bloomberg terminals. High noise-to-signal ratio.</p><div class="bg-orange-500/10 border border-orange-500/20 rounded p-4"><div class="flex items-center gap-2 text-[10px] text-orange-400 font-bold uppercase tracking-wider mb-2"><span>🎯</span> Execution Strategy</div><p class="text-sm text-slate-300">Do not execute market orders. Algorithms will hunt liquidity and give you terrible fills. Utilize tight trailing stops on profitable positions. Rely strictly on limit orders.</p></div></div>
+                        <div><div class="bg-blue-900/10 border border-blue-500/20 rounded p-4 mb-6"><div class="flex items-center gap-2 text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2"><span>📘</span> Tax Optimization Play</div><p class="text-sm text-slate-300">Utilize Roth IRA for any rapid intraday scalping to avoid generating massive short-term capital gains tax liabilities.</p></div><div><div class="flex items-center gap-2 text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-3"><span>📈</span> Key Indicators to Watch</div><ul class="text-sm text-slate-400 space-y-2 list-disc pl-4"><li>VIX Intraday Spikes</li><li>Twitter/X OSINT accounts</li><li>Oil Futures (Minute Charts)</li></ul></div></div>
+                    </div>
+                </div>
+                <div class="relative timeline-node">
+                    <div class="flex items-center gap-4 mb-4"><span class="bg-cyan-900/30 text-cyan-400 border border-cyan-500/30 text-[10px] font-bold uppercase px-3 py-1 rounded">Daily</span><h3 class="text-xl font-bold text-white">The Physical Supply Reality</h3></div>
+                    <div class="bg-[#111827] border border-[#1e293b] rounded-xl p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div><div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-2">Market Landscape</div><p class="text-sm text-slate-300 leading-relaxed mb-6">The narrative shifts from military strikes to logistics. The focus is on maritime insurance rates, tanker reroutes via the Cape of Good Hope, and physical barrel shortages.</p></div>
+                        <div><div class="bg-blue-900/10 border border-blue-500/20 rounded p-4"><div class="flex items-center gap-2 text-[10px] text-blue-400 font-bold uppercase tracking-wider mb-2"><span>📘</span> Tax Optimization Play</div><p class="text-sm text-slate-300">Identify Individual Brokerage losers (e.g. $CEG dragging) to prep for Tax-Loss Harvesting against your energy gains.</p></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// --- 1. DATA LINKS ---
+const MAIN_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSSHPSKPENsvV4nIteNVeKtUovjDtc_GDGctm_yoTPIK2NtniBn-iKX30Oy0gxBxPiLA3fDtCmSf-SV/pub?gid=0&single=true&output=csv';
+const LEDGER_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSSHPSKPENsvV4nIteNVeKtUovjDtc_GDGctm_yoTPIK2NtniBn-iKX30Oy0gxBxPiLA3fDtCmSf-SV/pub?gid=353907484&single=true&output=csv';
+
+const CATEGORY_MAP = {'BNO': 'ENERGY/COMMODITY', 'URNM': 'NUCLEAR MATERIALS', 'SHLD': 'DEFENSE INDUSTRIALS', 'CEG': 'DOMESTIC UTILITIES', 'MLPX': 'DOMESTIC MIDSTREAM', 'MPLX': 'DOMESTIC MIDSTREAM', 'OUST': 'FRONTIER TECH'};
+let livePrices = {}; 
+
+const SVG_UP = `<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>`;
+const SVG_DOWN = `<svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"></path></svg>`;
+
+// --- 2. TAB ENGINE ---
+function openTab(tabId) {
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(el => { el.classList.remove('tab-active'); el.classList.add('tab-inactive'); });
+    document.getElementById(tabId).classList.remove('hidden');
+    const btn = document.getElementById('btn-' + tabId);
+    btn.classList.remove('tab-inactive'); btn.classList.add('tab-active');
+}
+
+async function forceRefresh() {
+    const icon = document.getElementById('refresh-icon');
+    icon.classList.add('animate-spin', 'text-cyan-400');
+    await updateDashboard();
+    setTimeout(() => icon.classList.remove('animate-spin', 'text-cyan-400'), 1000);
+}
+
+function cleanNum(val) { return !val ? 0 : parseFloat(val.toString().replace(/[^0-9.-]+/g,"")) || 0; }
+
+// --- 3. FETCH ENGINE ---
+async function updateDashboard() {
+    try {
+        const fetchParams = { cache: 'no-store' };
+        const timeStr = '&_t=' + new Date().getTime(); // Forces browser to pull new data
+        
+        const [mRes, lRes] = await Promise.all([ fetch(MAIN_CSV_URL + timeStr, fetchParams), fetch(LEDGER_CSV_URL + timeStr, fetchParams) ]);
+        
+        if (mRes && mRes.ok) {
+            const mTxt = await mRes.text();
+            const parsedMain = Papa.parse(mTxt, { skipEmptyLines: true }).data;
+            document.getElementById('asset-container').innerHTML = '';
+            document.getElementById('intel-container').innerHTML = '';
+            
+            parsedMain.forEach((row, idx) => {
+                if (!row) return;
+                
+                const ticker = row[0] ? row[0].trim().toUpperCase() : ''; 
+                const price = cleanNum(row[1]); 
+                const news = row[2] ? row[2].trim() : '';
+
+                // Active Asset Tracking
+                if (ticker && price > 0 && ticker !== 'TICKER') {
+                    livePrices[ticker] = price;
+                    const category = CATEGORY_MAP[ticker] || 'MARKET ASSET';
+                    
+                    if(document.getElementById(`scen-${ticker.toLowerCase()}-live`)) document.getElementById(`scen-${ticker.toLowerCase()}-live`).innerText = '$' + price.toFixed(2);
+                    if(ticker === 'MLPX' && document.getElementById('scen-mlpx-live')) document.getElementById('scen-mlpx-live').innerText = '$' + price.toFixed(2);
+                    
+                    document.getElementById('asset-container').innerHTML += `<div class="p-4 rounded-lg bg-[#111827] border border-white/5 flex justify-between items-center mb-3"><div><div class="text-white font-bold text-base uppercase">${ticker}</div><div class="text-[9px] text-slate-500 uppercase tracking-widest mt-1">${category}</div></div><div class="text-right"><div class="text-white font-mono text-base font-bold">$${price.toFixed(2)}</div><div class="text-[9px] text-cyan-500 mt-1 flex items-center justify-end gap-1">Live Data <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div></div></div></div>`;
+                }
+
+                // Real-Time Intelligence Sweep
+                if (news && news.length > 5 && ticker !== "TICKER") {
+                    let tag = "UPDATE"; let tagColor = "bg-blue-900/30 text-blue-400 border border-blue-500/30";
+                    let content = news;
+                    const match = news.match(/^\[(.*?)\]\s*(.*)/);
+                    if (match) { tag = match[1].toUpperCase(); content = match[2]; }
+                    
+                    if(tag.includes("CRITICAL")) tagColor = "bg-red-950/40 text-red-500 border border-red-500/30";
+                    else if(tag.includes("INFRA")) tagColor = "bg-orange-950/40 text-orange-400 border border-orange-500/30";
+                    else if(tag.includes("MARKET")) tagColor = "bg-emerald-950/40 text-emerald-400 border border-emerald-500/30";
+                    else if(tag.includes("TECH")) tagColor = "bg-purple-950/40 text-purple-400 border border-purple-500/30";
+                    else if(tag.includes("CYBER")) tagColor = "bg-yellow-950/40 text-yellow-500 border border-yellow-500/30";
+
+                    // Creates sequential spacing for news items based on the row index
+                    const pTime = new Date(); pTime.setMinutes(pTime.getMinutes() - (idx * 5));
+                    const timeStr = pTime.toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit', hour12: false}) + ' EDT';
+
+                    document.getElementById('intel-container').innerHTML += `<div class="relative intel-node pb-2"><div class="flex items-center gap-3 mb-2"><span class="text-xs text-slate-500 font-mono">${timeStr}</span><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${tagColor}">${tag}</span></div><p class="text-sm text-slate-300 leading-relaxed pr-4">${content}</p></div>`;
+                }
             });
-            document.getElementById(tabId).classList.remove('hidden');
-            const btn = document.getElementById('btn-' + tabId);
-            btn.classList.remove('tab-inactive'); btn.classList.add('tab-active');
         }
 
-        async function forceRefresh() {
-            const icon = document.getElementById('refresh-icon');
-            icon.classList.add('animate-spin', 'text-cyan-400');
-            await updateDashboard();
-            setTimeout(() => icon.classList.remove('animate-spin', 'text-cyan-400'), 1000);
-        }
+        if (lRes && lRes.ok) {
+            const lTxt = await lRes.text();
+            const parsedLedger = Papa.parse(lTxt, { skipEmptyLines: true }).data;
+            let totalVal = 0; let totalEsc = 0; let totalDesc = 0;
+            document.getElementById('exposure-tbody').innerHTML = '';
+            document.getElementById('financials-tbody').innerHTML = '';
 
-        function cleanNum(val) {
-            if (!val) return 0;
-            return parseFloat(val.toString().replace(/[^0-9.-]+/g,"")) || 0;
-        }
-
-        // 4. MASTER FETCH ENGINE
-        async function updateDashboard() {
-            try {
-                // CACHE BUSTER: Forces fresh data pull
-                const fetchParams = { cache: 'no-store' };
-                const timeStr = '&_t=' + new Date().getTime();
+            parsedLedger.forEach((row, idx) => {
+                if (idx === 0 || row.length < 2) return;
+                const ticker = row[0] ? row[0].trim().toUpperCase() : '';
+                if (ticker.length < 2 || ticker === 'TICKER') return;
                 
-                const [mRes, lRes] = await Promise.all([
-                    fetch(MAIN_CSV_URL + timeStr, fetchParams), 
-                    fetch(LEDGER_CSV_URL + timeStr, fetchParams)
-                ]);
+                const rQ = cleanNum(row[1]); const rC = cleanNum(row[2]);
+                const iQ = cleanNum(row[3]); const iC = cleanNum(row[4]);
+
+                let livePrice = livePrices[ticker] || 0;
+                if (!livePrice && (ticker === 'MLPX' || ticker === 'MPLX')) { livePrice = livePrices['MLPX'] || livePrices['MPLX'] || 0; }
                 
-                // Process Main CSV (Prices & Intelligence)
-                if (mRes && mRes.ok) {
-                    const mTxt = await mRes.text();
-                    const parsedMain = Papa.parse(mTxt, { skipEmptyLines: true }).data;
-                    
-                    document.getElementById('asset-container').innerHTML = '';
-                    document.getElementById('intel-container').innerHTML = '';
-                    
-                    parsedMain.forEach((row, idx) => {
-                        if (row.length < 2) return;
-                        
-                        const ticker = row[0] ? row[0].trim().toUpperCase() : ''; 
-                        const price = cleanNum(row[1]); 
-                        const news = row[2] ? row[2].trim() : '';
+                const totalQty = rQ + iQ;
+                const posVal = totalQty * livePrice;
+                const totalCostBasis = (rQ * rC) + (iQ * iC);
+                const avgCost = totalQty > 0 ? (totalCostBasis / totalQty) : 0;
+                
+                const pnlDollars = posVal - totalCostBasis;
+                const pnlPercent = totalCostBasis > 0 ? (pnlDollars / totalCostBasis) * 100 : 0;
+                
+                totalVal += posVal;
+                totalEsc += (posVal * 1.30);
+                totalDesc += (posVal * 0.85);
 
-                        // ONLY update if it's a real ticker (fixes the OUST fallback bug)
-                        if (ticker && price > 0 && ticker !== 'TICKER') {
-                            livePrices[ticker] = price;
-                            const category = CATEGORY_MAP[ticker] || 'MARKET ASSET';
-                            
-                            if(document.getElementById(`scen-${ticker.toLowerCase()}-live`)) {
-                                document.getElementById(`scen-${ticker.toLowerCase()}-live`).innerText = '$' + price.toFixed(2);
-                            }
-                            if(ticker === 'MLPX' && document.getElementById('scen-mlpx-live')) {
-                                document.getElementById('scen-mlpx-live').innerText = '$' + price.toFixed(2);
-                            }
-                            
-                            document.getElementById('asset-container').innerHTML += `
-                                <div class="p-4 rounded-lg bg-[#111827] border border-white/5 flex justify-between items-center mb-3">
-                                    <div><div class="text-white font-bold text-base uppercase">${ticker}</div><div class="text-[9px] text-slate-500 uppercase tracking-widest mt-1">${category}</div></div>
-                                    <div class="text-right"><div class="text-white font-mono text-base font-bold">$${price.toFixed(2)}</div><div class="text-[9px] text-cyan-500 mt-1 flex items-center justify-end gap-1">Live Data <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div></div></div>
-                                </div>`;
-                        }
+                const isProfit = pnlDollars >= 0;
+                const pColor = isProfit ? 'text-emerald-500' : 'text-red-400';
+                const sign = isProfit ? '+' : '';
+                const trendIcon = isProfit ? SVG_UP : SVG_DOWN;
 
-                        if (news && news.length > 5 && ticker !== "TICKER") {
-                            let tag = "UPDATE"; let tagColor = "bg-blue-900/30 text-blue-400 border border-blue-500/30";
-                            let content = news;
-                            const match = news.match(/^\[(.*?)\]\s*(.*)/);
-                            
-                            if (match) { tag = match[1].toUpperCase(); content = match[2]; }
-                            if(tag.includes("CRITICAL")) tagColor = "bg-red-950/40 text-red-500 border border-red-500/30";
-                            else if(tag.includes("INFRA")) tagColor = "bg-orange-950/40 text-orange-400 border border-orange-500/30";
-                            else if(tag.includes("MARKET")) tagColor = "bg-emerald-950/40 text-emerald-400 border border-emerald-500/30";
-                            else if(tag.includes("TECH")) tagColor = "bg-purple-950/40 text-purple-400 border border-purple-500/30";
-                            else if(tag.includes("CYBER")) tagColor = "bg-yellow-950/40 text-yellow-500 border border-yellow-500/30";
-
-                            const pTime = new Date(); pTime.setMinutes(pTime.getMinutes() - (idx * 17));
-                            const timeStr = pTime.toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit', hour12: false}) + ' EDT';
-
-                            document.getElementById('intel-container').innerHTML += `
-                                <div class="relative intel-node pb-2">
-                                    <div class="flex items-center gap-3 mb-2">
-                                        <span class="text-xs text-slate-500 font-mono">${timeStr}</span>
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${tagColor}">${tag}</span>
-                                    </div>
-                                    <p class="text-sm text-slate-300 leading-relaxed pr-4">${content}</p>
-                                </div>`;
-                        }
-                    });
+                let strat = "HOLD"; let badge = "border border-slate-500/30 text-slate-400 bg-slate-500/10";
+                
+                if (totalCostBasis > 0) {
+                    if (pnlPercent >= 10.0) { 
+                        strat = iQ > 0 ? "TAKE PROFIT (IND)" : "TAKE PROFIT (ROTH)"; 
+                        badge = "border border-emerald-500/30 text-emerald-500 bg-emerald-500/10"; 
+                    } else if (pnlPercent <= -5.0) { 
+                        strat = iQ > 0 ? "TAX-LOSS HARVEST" : "HOLD (ROTH DRAG)"; 
+                        badge = iQ > 0 ? "border border-purple-500/30 text-purple-400 bg-purple-500/10" : "border border-slate-500/30 text-slate-400 bg-slate-500/10"; 
+                    }
                 }
 
-                // Process Ledger CSV (Exposure Matrix & Financials)
-                if (lRes && lRes.ok) {
-                    const lTxt = await lRes.text();
-                    const parsedLedger = Papa.parse(lTxt, { skipEmptyLines: true }).data;
+                document.getElementById('exposure-tbody').innerHTML += `<tr class="hover:bg-white/[0.02] transition-colors border-b border-[#1e293b] last:border-0"><td class="p-5"><div class="font-bold text-white uppercase text-base">${ticker}</div><div class="text-[10px] text-slate-500 mt-1">${CATEGORY_MAP[ticker] || 'Asset'}</div></td><td class="p-5 text-right font-mono text-sm text-slate-300">${rQ > 0 ? rQ.toFixed(2) : '-'}</td><td class="p-5 text-right font-mono text-sm text-slate-300">${iQ > 0 ? iQ.toFixed(2) : '-'}</td><td class="p-5 text-right font-mono text-sm text-slate-400">$${avgCost.toFixed(2)}</td><td class="p-5 text-right font-mono text-base font-bold text-white">$${livePrice.toFixed(2)}</td><td class="p-5 text-right"><div class="${pColor} font-bold text-sm flex items-center justify-end">${trendIcon} ${sign}${pnlPercent.toFixed(2)}%</div><div class="text-[11px] ${pColor} opacity-80 mt-1">${sign}$${Math.abs(pnlDollars).toFixed(2)}</div></td><td class="p-5 text-center"><span class="px-4 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest ${badge}">${strat}</span></td></tr>`;
                     
-                    let totalVal = 0; let totalEsc = 0; let totalDesc = 0;
-                    document.getElementById('exposure-tbody').innerHTML = '';
-                    document.getElementById('financials-tbody').innerHTML = '';
-
-                    parsedLedger.forEach((row, idx) => {
-                        if (idx === 0 || row.length < 2) return;
-                        const ticker = row[0] ? row[0].trim().toUpperCase() : '';
-                        if (ticker.length < 2 || ticker === 'TICKER') return;
-                        
-                        const rQ = cleanNum(row[1]); const rC = cleanNum(row[2]);
-                        const iQ = cleanNum(row[3]); const iC = cleanNum(row[4]);
-
-                        // Fallback logic specific to MPLX typo ONLY
-                        let livePrice = livePrices[ticker] || 0;
-                        if (!livePrice && (ticker === 'MLPX' || ticker === 'MPLX')) {
-                            livePrice = livePrices['MLPX'] || livePrices['MPLX'] || 0;
-                        }
-                        
-                        const totalQty = rQ + iQ;
-                        const posVal = totalQty * livePrice;
-                        const totalCostBasis = (rQ * rC) + (iQ * iC);
-                        const avgCost = totalQty > 0 ? (totalCostBasis / totalQty) : 0;
-                        
-                        const pnlDollars = posVal - totalCostBasis;
-                        const pnlPercent = totalCostBasis > 0 ? (pnlDollars / totalCostBasis) * 100 : 0;
-                        
-                        totalVal += posVal;
-                        
-                        // Financial Projections Math
-                        const escVal = posVal * 1.30;
-                        const descVal = posVal * 0.85;
-                        totalEsc += escVal;
-                        totalDesc += descVal;
-
-                        // UI Formatting
-                        const isProfit = pnlDollars >= 0;
-                        const pColor = isProfit ? 'text-emerald-500' : 'text-red-400';
-                        const sign = isProfit ? '+' : '';
-                        const trendIcon = isProfit ? SVG_UP : SVG_DOWN;
-
-                        // ==========================================
-                        // DYNAMIC STRATEGY ENGINE
-                        // ==========================================
-                        let strat = "HOLD";
-                        let badge = "border border-slate-500/30 text-slate-400 bg-slate-500/10";
-
-                        if (totalCostBasis > 0) {
-                            if (pnlPercent >= 10.0) { 
-                                strat = iQ > 0 ? "TAKE PROFIT (IND)" : "TAKE PROFIT (ROTH)";
-                                badge = "border border-emerald-500/30 text-emerald-500 bg-emerald-500/10";
-                            } else if (pnlPercent <= -5.0) { 
-                                if (iQ > 0) {
-                                    strat = "TAX-LOSS HARVEST";
-                                    badge = "border border-purple-500/30 text-purple-400 bg-purple-500/10";
-                                } else {
-                                    strat = "HOLD (ROTH DRAG)";
-                                    badge = "border border-slate-500/30 text-slate-400 bg-slate-500/10";
-                                }
-                            }
-                        }
-                        // ==========================================
-
-                        // Write Exposure Matrix Row
-                        document.getElementById('exposure-tbody').innerHTML += `
-                            <tr class="hover:bg-white/[0.02] transition-colors border-b border-[#1e293b] last:border-0">
-                                <td class="p-5">
-                                    <div class="font-bold text-white uppercase text-base">${ticker}</div>
-                                    <div class="text-[10px] text-slate-500 mt-1">${CATEGORY_MAP[ticker] || 'Asset'}</div>
-                                </td>
-                                <td class="p-5 text-right font-mono text-sm text-slate-300">${rQ > 0 ? rQ.toFixed(2) : '-'}</td>
-                                <td class="p-5 text-right font-mono text-sm text-slate-300">${iQ > 0 ? iQ.toFixed(2) : '-'}</td>
-                                <td class="p-5 text-right font-mono text-sm text-slate-400">$${avgCost.toFixed(2)}</td>
-                                <td class="p-5 text-right font-mono text-base font-bold text-white">$${livePrice.toFixed(2)}</td>
-                                <td class="p-5 text-right">
-                                    <div class="${pColor} font-bold text-sm flex items-center justify-end">${trendIcon} ${sign}${pnlPercent.toFixed(2)}%</div>
-                                    <div class="text-[11px] ${pColor} opacity-80 mt-1">${sign}$${Math.abs(pnlDollars).toFixed(2)}</div>
-                                </td>
-                                <td class="p-5 text-center"><span class="px-4 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest ${badge}">${strat}</span></td>
-                            </tr>`;
-                            
-                        // Write Financials Matrix Row
-                        if(totalQty > 0) {
-                            document.getElementById('financials-tbody').innerHTML += `
-                                <div class="grid grid-cols-4 border-b border-[#1e293b] last:border-0 hover:bg-white/[0.02]">
-                                    <div class="p-4 flex flex-col justify-center"><div class="text-white font-bold text-base">${ticker}</div><div class="text-[10px] text-slate-500 font-mono">${totalQty.toFixed(2)} Shares</div></div>
-                                    <div class="p-4 flex flex-col items-center justify-center border-l border-[#1e293b]"><div class="text-[10px] text-slate-500 uppercase mb-1">Live: $${livePrice.toFixed(2)}</div><div class="text-lg text-white font-mono font-bold">$${posVal.toLocaleString('en-US',{minimumFractionDigits:2})}</div></div>
-                                    <div class="p-4 border-l border-[#1e293b] bg-red-950/10 flex flex-col items-center justify-center"><div class="text-lg text-white font-mono font-bold">$${escVal.toLocaleString('en-US',{minimumFractionDigits:2})}</div><div class="text-[10px] text-red-500 font-mono mt-1">+$${(escVal-posVal).toLocaleString('en-US',{minimumFractionDigits:2})}</div></div>
-                                    <div class="p-4 border-l border-[#1e293b] bg-emerald-950/10 flex flex-col items-center justify-center"><div class="text-lg text-white font-mono font-bold">$${descVal.toLocaleString('en-US',{minimumFractionDigits:2})}</div><div class="text-[10px] text-emerald-500 font-mono mt-1">-$${(posVal-descVal).toLocaleString('en-US',{minimumFractionDigits:2})}</div></div>
-                                </div>`;
-                        }
-                    });
-                    
-                    document.getElementById('total-portfolio-value').innerText = '$' + totalVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                    
-                    document.getElementById('proj-base-total').innerText = '$' + totalVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                    document.getElementById('proj-esc-total').innerText = '$' + totalEsc.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                    document.getElementById('proj-esc-diff').innerText = '+$' + (totalEsc - totalVal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                    document.getElementById('proj-desc-total').innerText = '$' + totalDesc.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                    document.getElementById('proj-desc-diff').innerText = '-$' + (totalVal - totalDesc).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                if(totalQty > 0) {
+                    document.getElementById('financials-tbody').innerHTML += `<div class="grid grid-cols-4 border-b border-[#1e293b] last:border-0 hover:bg-white/[0.02]"><div class="p-4 flex flex-col justify-center"><div class="text-white font-bold text-base">${ticker}</div><div class="text-[10px] text-slate-500 font-mono">${totalQty.toFixed(2)} Shares</div></div><div class="p-4 flex flex-col items-center justify-center border-l border-[#1e293b]"><div class="text-[10px] text-slate-500 uppercase mb-1">Live: $${livePrice.toFixed(2)}</div><div class="text-lg text-white font-mono font-bold">$${posVal.toLocaleString('en-US',{minimumFractionDigits:2})}</div></div><div class="p-4 border-l border-[#1e293b] bg-red-950/10 flex flex-col items-center justify-center"><div class="text-lg text-white font-mono font-bold">$${(posVal*1.30).toLocaleString('en-US',{minimumFractionDigits:2})}</div><div class="text-[10px] text-red-500 font-mono mt-1">+$${((posVal*1.30)-posVal).toLocaleString('en-US',{minimumFractionDigits:2})}</div></div><div class="p-4 border-l border-[#1e293b] bg-emerald-950/10 flex flex-col items-center justify-center"><div class="text-lg text-white font-mono font-bold">$${(posVal*0.85).toLocaleString('en-US',{minimumFractionDigits:2})}</div><div class="text-[10px] text-emerald-500 font-mono mt-1">-$${(posVal-(posVal*0.85)).toLocaleString('en-US',{minimumFractionDigits:2})}</div></div></div>`;
                 }
-            } catch (e) { console.error('System Error:', e); }
+            });
+            
+            document.getElementById('total-portfolio-value').innerText = '$' + totalVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('proj-base-total').innerText = '$' + totalVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('proj-esc-total').innerText = '$' + totalEsc.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('proj-esc-diff').innerText = '+$' + (totalEsc - totalVal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('proj-desc-total').innerText = '$' + totalDesc.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('proj-desc-diff').innerText = '-$' + (totalVal - totalDesc).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
+    } catch (e) { console.error('System Error:', e); }
+}
 
-        function clock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-US', {hour12: false}); }
-        setInterval(updateDashboard, 60000); 
-        setInterval(clock, 1000);
-        updateDashboard(); clock();
-    </script>
+// 5 Minute refresh interval to match Google Sheets publishing sync
+function clock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-US', {hour12: false}); }
+setInterval(updateDashboard, 300000); 
+setInterval(clock, 1000);
+updateDashboard(); clock();
+</script>
 </body>
 </html>
