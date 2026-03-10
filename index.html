@@ -7,14 +7,25 @@
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap');
-        body { font-family: 'Space+Grotesk', sans-serif; background-color: #050a10; color: #e2e8f0; }
+        body { font-family: 'Space+Grotesk', sans-serif; background-color: #050a10; color: #e2e8f0; overflow-x: hidden; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         .critical-pulse { animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        
+        /* High-Fidelity Tab Styling */
+        .tab-btn { border-bottom-width: 2px; transition: all 0.2s ease; }
+        .tab-active { border-color: #06b6d4 !important; color: #06b6d4 !important; background-color: rgba(6,182,212,0.05) !important; }
+        .tab-inactive { border-color: transparent; color: #64748b; }
+        .tab-inactive:hover { color: #cbd5e1; }
+        .tab-icon { opacity: 0.5; }
+        .tab-active .tab-icon { opacity: 1; stroke: #06b6d4; }
     </style>
 </head>
 <body class="p-2 md:p-6">
@@ -22,16 +33,17 @@
         
         <div class="p-6 border-b border-[#1e293b] flex flex-col md:flex-row justify-between items-center bg-[#0d151d] gap-4 shrink-0">
             <div>
-                <h1 class="text-xl md:text-2xl font-bold tracking-[0.15em] text-white flex items-center gap-2 uppercase">
-                    <span class="text-blue-500 font-normal">🌐</span> Global Macro Command Center
+                <h1 class="text-xl md:text-2xl font-bold tracking-[0.15em] text-white flex items-center gap-3 uppercase">
+                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                    GLOBAL MACRO COMMAND CENTER
                 </h1>
-                <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-[0.3em]">Strategic Portfolio & Geopolitical Integration</p>
+                <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-[0.3em] ml-9">Strategic Portfolio & Geopolitical Integration</p>
             </div>
             <div class="flex items-center gap-6 bg-black/40 p-3 rounded-lg border border-white/5">
                 <div class="text-right hidden md:block">
                     <div class="text-[8px] text-slate-500 uppercase font-bold mb-1 tracking-widest">Operation Epic Fury</div>
                     <span class="bg-red-900/30 text-red-500 text-[10px] px-2 py-1 rounded border border-red-500/40 critical-pulse font-bold flex items-center gap-2">
-                        <div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div> Threat: Critical
+                        <div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div> THREAT: CRITICAL
                     </span>
                 </div>
                 <div class="w-px h-8 bg-white/5 hidden md:block"></div>
@@ -48,10 +60,24 @@
         </div>
 
         <div class="flex border-b border-[#1e293b] bg-[#0d151d] overflow-x-auto scrollbar-hide shrink-0">
-            <button id="btn-tab-situation" onclick="openTab('tab-situation')" class="tab-btn px-6 py-4 text-[11px] font-bold uppercase tracking-widest border-b-2 border-cyan-400 text-cyan-400 bg-cyan-900/10 whitespace-nowrap">Situation Report</button>
-            <button id="btn-tab-exposure" onclick="openTab('tab-exposure')" class="tab-btn px-6 py-4 text-[11px] font-bold uppercase tracking-widest border-b-2 border-transparent text-slate-500 hover:text-slate-300 whitespace-nowrap">Exposure Matrix</button>
-            <button id="btn-tab-scenarios" onclick="openTab('tab-scenarios')" class="tab-btn px-6 py-4 text-[11px] font-bold uppercase tracking-widest border-b-2 border-transparent text-slate-500 hover:text-slate-300 whitespace-nowrap">Scenario Mechanics</button>
-            <button id="btn-tab-holdings" onclick="openTab('tab-holdings')" class="tab-btn px-6 py-4 text-[11px] font-bold uppercase tracking-widest border-b-2 border-transparent text-slate-500 hover:text-slate-300 whitespace-nowrap">Holdings Background</button>
+            <button onclick="openTab('tab-situation')" id="btn-tab-situation" class="tab-btn tab-active px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2">
+                <svg class="w-4 h-4 tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg> Situation Report
+            </button>
+            <button onclick="openTab('tab-holdings')" id="btn-tab-holdings" class="tab-btn tab-inactive px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2">
+                <svg class="w-4 h-4 tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg> Holdings Background
+            </button>
+            <button onclick="openTab('tab-exposure')" id="btn-tab-exposure" class="tab-btn tab-inactive px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2">
+                <svg class="w-4 h-4 tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg> Exposure Matrix
+            </button>
+            <button onclick="openTab('tab-scenarios')" id="btn-tab-scenarios" class="tab-btn tab-inactive px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2">
+                <svg class="w-4 h-4 tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg> Scenario Mechanics
+            </button>
+            <button onclick="openTab('tab-financials')" id="btn-tab-financials" class="tab-btn tab-inactive px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2">
+                <svg class="w-4 h-4 tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg> Financial Projections
+            </button>
+            <button onclick="openTab('tab-tactical')" id="btn-tab-tactical" class="tab-btn tab-inactive px-6 py-4 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap flex items-center gap-2">
+                <svg class="w-4 h-4 tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg> Tactical Horizons
+            </button>
         </div>
 
         <div class="flex-grow bg-[#0b1219] relative">
@@ -59,187 +85,282 @@
             <div id="tab-situation" class="tab-pane block h-full flex flex-col">
                 <div class="grid grid-cols-1 lg:grid-cols-3 flex-grow">
                     <div class="lg:col-span-2 p-8 border-r border-[#1e293b]">
-                        <h2 class="text-sm font-bold text-white mb-6 flex items-center gap-2 uppercase tracking-wide"><span class="text-orange-500">⚠️</span> Intelligence Sweep</h2>
-                        <div id="intel-container" class="space-y-4"></div>
+                        <h2 class="text-sm font-bold text-white mb-8 flex items-center gap-2 uppercase tracking-wide">
+                            <span class="text-orange-500">⚠️</span> Real-Time Intelligence Sweep
+                        </h2>
+                        <div id="intel-container" class="space-y-6">
+                            <p class="text-slate-500 italic">Establishing secure connection...</p>
+                        </div>
                     </div>
                     <div class="p-8 bg-[#0a1017]">
-                        <h2 class="text-sm font-bold text-white mb-6 flex items-center gap-2 uppercase tracking-wide"><span class="text-blue-400">📈</span> Live Asset Feed</h2>
-                        <div id="asset-container" class="space-y-3"></div>
+                        <h2 class="text-sm font-bold text-white mb-8 flex items-center gap-2 uppercase tracking-wide">
+                            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg> Active Asset Tracking
+                        </h2>
+                        <div id="asset-container" class="space-y-4"></div>
                     </div>
                 </div>
                 <div class="p-8 border-t border-[#1e293b] bg-[#0d151d]">
-                    <h3 class="text-[12px] font-bold text-white mb-3 flex items-center gap-2 tracking-wide uppercase"><span class="text-cyan-500">🌐</span> Strategic Assessment</h3>
-                    <p id="dynamic-assessment" class="text-sm text-slate-400 leading-relaxed max-w-5xl">Syncing data...</p>
+                    <h3 class="text-[12px] font-bold text-white mb-4 flex items-center gap-2 tracking-wide uppercase">
+                        <span class="text-cyan-500">🌐</span> McKinsey/Fund Strategic Assessment
+                    </h3>
+                    <p id="dynamic-assessment" class="text-sm text-slate-400 leading-relaxed max-w-6xl">Syncing macro thesis...</p>
+                </div>
+            </div>
+
+            <div id="tab-holdings" class="tab-pane hidden p-8">
+                <h2 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Holdings Background & Geopolitical Relevance</h2>
+                <p class="text-sm text-slate-500 mb-8">Fundamental analysis justifying portfolio inclusion against the backdrop of Operation Epic Fury.</p>
+                <div class="p-12 bg-[#111827] border border-[#1e293b] rounded-xl text-center text-slate-500">
+                    Awaiting fundamental breakdown synchronization...
                 </div>
             </div>
 
             <div id="tab-exposure" class="tab-pane hidden p-8">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
                     <div>
-                        <h2 class="text-xl font-bold text-white mb-1 uppercase">Portfolio Exposure Matrix</h2>
-                        <p class="text-sm text-slate-500">Live P&L tracking based on account-level cost basis.</p>
+                        <h2 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Consolidated Exposure Matrix</h2>
+                        <p class="text-sm text-slate-500">Combined Roth IRA & Individual Brokerage Assessment</p>
                     </div>
-                    <div class="bg-[#0f172a] border border-slate-800 rounded-lg p-4 text-right">
-                        <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Total Assets Value</div>
+                    <div class="bg-[#0f172a] border border-slate-800 rounded-lg p-4 text-right min-w-[200px]">
+                        <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Tracked Assets Value</div>
                         <div id="total-portfolio-value" class="text-2xl font-mono font-bold text-cyan-400">$0.00</div>
                     </div>
                 </div>
-                <div class="overflow-x-auto rounded-lg border border-[#1e293b]">
+                <div class="overflow-x-auto rounded-lg border border-[#1e293b] bg-[#0b1219]">
                     <table class="w-full text-left border-collapse min-w-[900px]">
                         <thead>
                             <tr class="bg-[#0d151d] text-[10px] uppercase tracking-widest text-slate-500 border-b border-[#1e293b]">
-                                <th class="p-4 font-bold">Ticker</th>
-                                <th class="p-4 font-bold text-right">Roth (Qty / Cost)</th>
-                                <th class="p-4 font-bold text-right">Ind (Qty / Cost)</th>
-                                <th class="p-4 font-bold text-right">Live Price</th>
-                                <th class="p-4 font-bold text-right">Total P&L</th>
-                                <th class="p-4 font-bold text-center">Strategy</th>
+                                <th class="p-5 font-bold">Asset</th>
+                                <th class="p-5 font-bold text-right">Roth Qty</th>
+                                <th class="p-5 font-bold text-right">Ind Qty</th>
+                                <th class="p-5 font-bold text-right">Avg Cost</th>
+                                <th class="p-5 font-bold text-right">Live Price</th>
+                                <th class="p-5 font-bold text-right">Total P&L</th>
+                                <th class="p-5 font-bold text-center">Tax Strategy / Status</th>
                             </tr>
                         </thead>
-                        <tbody id="exposure-tbody" class="text-sm divide-y divide-[#1e293b] bg-[#0b1219]"></tbody>
+                        <tbody id="exposure-tbody" class="text-sm divide-y divide-[#1e293b]">
+                            <tr><td colspan="7" class="p-8 text-center text-slate-500 italic">Syncing Ledger Data...</td></tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
 
-            <div id="tab-scenarios" class="tab-pane hidden p-8"><h2 class="text-xl font-bold text-white mb-6">SCENARIO MODELS</h2><div class="p-12 bg-[#111827] border border-white/5 rounded-xl text-center text-slate-500">Tracking kinetic triggers...</div></div>
-            <div id="tab-holdings" class="tab-pane hidden p-8"><h2 class="text-xl font-bold text-white mb-6">HOLDINGS BACKGROUND</h2><div class="p-12 bg-[#111827] border border-white/5 rounded-xl text-center text-slate-500">Awaiting fundamental breakdown...</div></div>
+            <div id="tab-scenarios" class="tab-pane hidden p-8">
+                <h2 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Scenario Mechanics & Price Action Models</h2>
+                <p class="text-sm text-slate-500 mb-8">Detailed breakdown of fundamental triggers and resulting market mechanics.</p>
+                <div class="p-12 bg-[#111827] border border-[#1e293b] rounded-xl text-center text-slate-500">
+                    Tracking kinetic triggers...
+                </div>
+            </div>
+
+            <div id="tab-financials" class="tab-pane hidden p-8">
+                <h2 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Financial Projections Matrix</h2>
+                <p class="text-sm text-slate-500 mb-8">Account-segmented impact modeling based on target price scenarios.</p>
+                <div class="p-12 bg-[#111827] border border-[#1e293b] rounded-xl text-center text-slate-500">
+                    Modeling target scenarios against cost-basis...
+                </div>
+            </div>
+
+            <div id="tab-tactical" class="tab-pane hidden p-8">
+                <h2 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Tactical Time Horizon Playbook</h2>
+                <p class="text-sm text-slate-500 mb-8">Execution strategies, tax optimization, and precise indicators across multiple timeframes.</p>
+                <div class="p-12 bg-[#111827] border border-[#1e293b] rounded-xl text-center text-slate-500">
+                    Playbook sequence: Hourly / Daily / Strategic...
+                </div>
+            </div>
 
         </div>
     </div>
 
     <script>
-        // Pre-filled working links
+        // --- 1. CONFIGURATION ---
         const MAIN_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSSHPSKPENsvV4nIteNVeKtUovjDtc_GDGctm_yoTPIK2NtniBn-iKX30Oy0gxBxPiLA3fDtCmSf-SV/pub?gid=0&single=true&output=csv';
         const LEDGER_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSSHPSKPENsvV4nIteNVeKtUovjDtc_GDGctm_yoTPIK2NtniBn-iKX30Oy0gxBxPiLA3fDtCmSf-SV/pub?gid=353907484&single=true&output=csv';
 
-        let livePrices = {};
+        // Map categories for the UI
+        const CATEGORY_MAP = {
+            'BNO': 'ENERGY/COMMODITY', 'URNM': 'NUCLEAR MATERIALS', 
+            'SHLD': 'DEFENSE INDUSTRIALS', 'CEG': 'DOMESTIC UTILITIES', 
+            'MLPX': 'DOMESTIC MIDSTREAM', 'MPLX': 'DOMESTIC MIDSTREAM',
+            'OUST': 'FRONTIER TECH'
+        };
 
-        // 100% Bulletproof CSV Parser (Replaces broken Regex)
-        function parseCSV(text) {
-            let rows = []; let currentRow = []; let currentCell = ''; let inQuotes = false;
-            for (let i = 0; i < text.length; i++) {
-                let char = text[i];
-                if (char === '"' && inQuotes && text[i+1] === '"') { currentCell += '"'; i++; } 
-                else if (char === '"') { inQuotes = !inQuotes; } 
-                else if (char === ',' && !inQuotes) { currentRow.push(currentCell.trim()); currentCell = ''; } 
-                else if ((char === '\n' || char === '\r') && !inQuotes) {
-                    if (char === '\r' && text[i+1] === '\n') i++;
-                    currentRow.push(currentCell.trim());
-                    if (currentRow.some(c => c !== '')) rows.push(currentRow);
-                    currentRow = []; currentCell = '';
-                } else { currentCell += char; }
-            }
-            if (currentCell || currentRow.length > 0) {
-                currentRow.push(currentCell.trim());
-                if (currentRow.some(c => c !== '')) rows.push(currentRow);
-            }
-            return rows;
-        }
+        let livePrices = {}; 
 
+        // --- 2. TAB SWITCHING ENGINE ---
         function openTab(tabId) {
             document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => {
-                el.classList.remove('border-cyan-400', 'text-cyan-400', 'bg-cyan-900/10');
-                el.classList.add('border-transparent', 'text-slate-500');
+                el.classList.remove('tab-active');
+                el.classList.add('tab-inactive');
             });
+
             document.getElementById(tabId).classList.remove('hidden');
             const btn = document.getElementById('btn-' + tabId);
-            btn.classList.remove('border-transparent', 'text-slate-500');
-            btn.classList.add('border-cyan-400', 'text-cyan-400', 'bg-cyan-900/10');
+            btn.classList.remove('tab-inactive');
+            btn.classList.add('tab-active');
         }
 
         async function forceRefresh() {
             const icon = document.getElementById('refresh-icon');
             icon.classList.add('animate-spin', 'text-cyan-400');
             await updateDashboard();
-            setTimeout(() => { icon.classList.remove('animate-spin', 'text-cyan-400'); }, 500);
+            setTimeout(() => icon.classList.remove('animate-spin', 'text-cyan-400'), 1000);
         }
 
+        // Safely strip string formatting to raw floats
+        function cleanNum(val) {
+            if (!val) return 0;
+            return parseFloat(val.toString().replace(/[^0-9.-]+/g,"")) || 0;
+        }
+
+        // --- 3. DATA FETCHING & PARSING ENGINE ---
         async function updateDashboard() {
             try {
-                const [mRes, lRes] = await Promise.all([fetch(MAIN_CSV_URL).catch(() => null), fetch(LEDGER_CSV_URL).catch(() => null)]);
-
+                const [mRes, lRes] = await Promise.all([fetch(MAIN_CSV_URL), fetch(LEDGER_CSV_URL)]);
+                
+                // Process Main CSV (Prices & Intelligence)
                 if (mRes && mRes.ok) {
                     const mTxt = await mRes.text();
-                    const mLines = parseCSV(mTxt);
+                    const parsedMain = Papa.parse(mTxt, { skipEmptyLines: true }).data;
                     
                     document.getElementById('asset-container').innerHTML = '';
                     document.getElementById('intel-container').innerHTML = '';
                     
-                    mLines.forEach((p, idx) => {
-                        if(p.length < 2) return;
-                        if(idx === 0 && p[3]) document.getElementById('dynamic-assessment').innerText = p[3];
+                    parsedMain.forEach((row, idx) => {
+                        if (row.length < 2) return;
                         
-                        const t = p[0]; const pr = parseFloat(p[1]); const int = p[2];
+                        // Row 1 carries the Strategic Assessment
+                        if (idx === 0 && row[3]) document.getElementById('dynamic-assessment').innerText = row[3];
+                        
+                        const ticker = row[0] ? row[0].trim().toUpperCase() : ''; 
+                        const price = cleanNum(row[1]); 
+                        const news = row[2] ? row[2].trim() : '';
 
-                        if (t && !isNaN(pr) && t !== 'Ticker') {
-                            livePrices[t.toUpperCase()] = pr;
-                            document.getElementById('asset-container').innerHTML += `<div class="p-4 rounded-lg bg-[#111827] border border-white/5 flex justify-between items-center"><div class="text-white font-bold text-sm uppercase">${t}</div><div class="text-cyan-400 font-mono text-sm font-bold">$${pr.toFixed(2)}</div></div>`;
+                        if (ticker && price > 0 && ticker !== 'TICKER') {
+                            livePrices[ticker] = price;
+                            const category = CATEGORY_MAP[ticker] || 'MARKET ASSET';
+                            
+                            // Build Asset Card
+                            document.getElementById('asset-container').innerHTML += `
+                                <div class="p-4 rounded-lg bg-[#111827] border border-white/5 flex justify-between items-center mb-3">
+                                    <div>
+                                        <div class="text-white font-bold text-base uppercase">${ticker}</div>
+                                        <div class="text-[9px] text-slate-500 uppercase tracking-widest mt-1">${category}</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-white font-mono text-base font-bold">$${price.toFixed(2)}</div>
+                                        <div class="text-[9px] text-cyan-500 mt-1 flex items-center justify-end gap-1">Live Data <div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div></div>
+                                    </div>
+                                </div>`;
                         }
 
-                        if (int && int.length > 5 && t !== "Ticker") {
-                            let tag = "UPDATE"; let tagColor = "bg-blue-900/30 border-blue-500/30 text-blue-400";
-                            const match = int.match(/^\[(.*?)\]\s*(.*)/);
-                            let content = int;
+                        if (news && news.length > 5 && ticker !== "TICKER") {
+                            // Default tag logic
+                            let tag = "UPDATE"; 
+                            let tagColor = "bg-blue-900/30 text-blue-400 border-blue-500/30";
+                            let content = news;
                             
-                            if (match) { tag = match[1]; content = match[2]; }
-                            if(tag.includes("CRITICAL")) tagColor = "bg-red-900/30 border-red-500/30 text-red-500";
-                            else if(tag.includes("INFRA")) tagColor = "bg-orange-900/30 border-orange-500/30 text-orange-400";
-                            else if(tag.includes("MARKET")) tagColor = "bg-emerald-900/30 border-emerald-500/30 text-emerald-400";
-                            else if(tag.includes("TECH")) tagColor = "bg-purple-900/30 border-purple-500/30 text-purple-400";
-                            else if(tag.includes("CYBER")) tagColor = "bg-yellow-900/30 border-yellow-500/30 text-yellow-500";
+                            const match = news.match(/^\[(.*?)\]\s*(.*)/);
+                            if (match) { 
+                                tag = match[1].toUpperCase(); 
+                                content = match[2]; 
+                            }
+                            
+                            if(tag.includes("CRITICAL")) tagColor = "bg-red-900/30 text-red-500 border-red-500/30";
+                            else if(tag.includes("INFRA")) tagColor = "bg-orange-900/30 text-orange-400 border-orange-500/30";
+                            else if(tag.includes("MARKET")) tagColor = "bg-emerald-900/30 text-emerald-400 border-emerald-500/30";
+                            else if(tag.includes("TECH")) tagColor = "bg-purple-900/30 text-purple-400 border-purple-500/30";
+                            else if(tag.includes("MILITARY")) tagColor = "bg-yellow-900/30 text-yellow-500 border-yellow-500/30";
 
-                            document.getElementById('intel-container').innerHTML += `<div class="bg-[#111827] border border-white/5 rounded-lg p-5 mb-4"><div class="${tagColor} border px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider inline-block mb-3">${tag}</div><p class="text-sm text-slate-300 leading-relaxed">${content}</p></div>`;
+                            // Generate pseudo-time based on index for aesthetic
+                            const pseudoTime = new Date();
+                            pseudoTime.setMinutes(pseudoTime.getMinutes() - (idx * 17));
+                            const timeStr = pseudoTime.toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit', hour12: false}) + ' EDT';
+
+                            document.getElementById('intel-container').innerHTML += `
+                                <div class="mb-6">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="text-xs text-slate-500 font-mono">${timeStr}</span>
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${tagColor}">${tag}</span>
+                                    </div>
+                                    <p class="text-sm text-slate-300 leading-relaxed pl-1">${content}</p>
+                                </div>`;
                         }
                     });
                 }
 
+                // Process Ledger CSV (Exposure Matrix)
                 if (lRes && lRes.ok) {
                     const lTxt = await lRes.text();
-                    const lLines = parseCSV(lTxt);
+                    const parsedLedger = Papa.parse(lTxt, { skipEmptyLines: true }).data;
+                    
                     let totalVal = 0;
                     document.getElementById('exposure-tbody').innerHTML = '';
 
-                    lLines.forEach((p, idx) => {
-                        if(idx === 0 || p.length < 2) return;
-                        const rawT = p[0] ? p[0].toUpperCase() : '';
-                        if(rawT.length < 2) return;
+                    parsedLedger.forEach((row, idx) => {
+                        if (idx === 0 || row.length < 2) return;
+                        const ticker = row[0] ? row[0].trim().toUpperCase() : '';
+                        if (ticker.length < 2 || ticker === 'TICKER') return;
                         
-                        const rQ = parseFloat(p[1]) || 0; const rC = parseFloat(p[2]) || 0;
-                        const iQ = parseFloat(p[3]) || 0; const iC = parseFloat(p[4]) || 0;
-                        const st = p[5] || 'HOLD';
+                        const rQ = cleanNum(row[1]); const rC = cleanNum(row[2]);
+                        const iQ = cleanNum(row[3]); const iC = cleanNum(row[4]);
+                        const strat = row[5] || 'HOLD';
 
-                        let live = livePrices[rawT] || livePrices["MLPX"] || livePrices["MPLX"] || 0;
+                        // Logic for live price & handling MPLX typo
+                        const livePrice = livePrices[ticker] || livePrices["MLPX"] || livePrices["MPLX"] || 0;
                         
-                        const posV = (rQ + iQ) * live;
-                        const costB = (rQ * rC) + (iQ * iC);
-                        const pnlD = posV - costB;
-                        const pnlP = costB > 0 ? (pnlD / costB) * 100 : 0;
-                        totalVal += posV;
+                        // Math Engine
+                        const totalQty = rQ + iQ;
+                        const posVal = totalQty * livePrice;
+                        const totalCostBasis = (rQ * rC) + (iQ * iC);
+                        
+                        // Blended Avg Cost (To match Image 5 layout)
+                        const avgCost = totalQty > 0 ? (totalCostBasis / totalQty) : 0;
+                        
+                        const pnlDollars = posVal - totalCostBasis;
+                        const pnlPercent = totalCostBasis > 0 ? (pnlDollars / totalCostBasis) * 100 : 0;
+                        totalVal += posVal;
 
-                        let bC = 'border-slate-500/30 text-slate-400 bg-slate-500/10';
-                        if(st.toLowerCase().includes('profit')) bC = 'border-emerald-500/30 text-emerald-500 bg-emerald-500/10';
-                        else if(st.toLowerCase().includes('loss')) bC = 'border-purple-500/30 text-purple-400 bg-purple-500/10';
+                        // Formatting UI
+                        const isProfit = pnlDollars >= 0;
+                        const pnlColor = isProfit ? 'text-emerald-500' : 'text-red-400';
+                        const sign = isProfit ? '+' : '';
+                        const trendIcon = isProfit ? '📈' : '📉';
+                        const subCat = CATEGORY_MAP[ticker] || 'Asset';
+
+                        let badgeColor = 'border-slate-500/30 text-slate-400 bg-slate-500/10';
+                        if(strat.toUpperCase().includes('PROFIT')) badgeColor = 'border-emerald-500/30 text-emerald-500 bg-emerald-500/10';
+                        else if(strat.toUpperCase().includes('LOSS')) badgeColor = 'border-purple-500/30 text-purple-400 bg-purple-500/10';
 
                         document.getElementById('exposure-tbody').innerHTML += `
-                            <tr class="hover:bg-white/[0.02] border-b border-[#1e293b] last:border-0">
-                                <td class="p-4 font-bold text-white uppercase">${rawT}</td>
-                                <td class="p-4 text-right"><div class="text-slate-300 font-mono">${rQ > 0 ? rQ.toFixed(2) : '-'}</div><div class="text-[10px] text-slate-500">${rC > 0 ? '@ $'+rC.toFixed(2) : ''}</div></td>
-                                <td class="p-4 text-right"><div class="text-slate-300 font-mono">${iQ > 0 ? iQ.toFixed(2) : '-'}</div><div class="text-[10px] text-slate-500">${iC > 0 ? '@ $'+iC.toFixed(2) : ''}</div></td>
-                                <td class="p-4 text-right text-white font-mono font-bold">$${live.toFixed(2)}</td>
-                                <td class="p-4 text-right"><div class="${pnlD >= 0 ? 'text-emerald-500' : 'text-red-400'} font-bold">${pnlD >= 0 ? '+' : ''}${pnlP.toFixed(2)}%</div><div class="text-[11px] opacity-70">${pnlD >= 0 ? '+' : ''}$${Math.abs(pnlD).toFixed(2)}</div></td>
-                                <td class="p-4 text-center"><span class="border px-3 py-1 rounded text-[9px] font-bold uppercase ${bC}">${st}</span></td>
+                            <tr class="hover:bg-white/[0.02] transition-colors">
+                                <td class="p-5">
+                                    <div class="font-bold text-white uppercase text-base">${ticker}</div>
+                                    <div class="text-[10px] text-slate-500 mt-1">${subCat}</div>
+                                </td>
+                                <td class="p-5 text-right font-mono text-sm text-slate-300">${rQ > 0 ? rQ.toFixed(2) : '-'}</td>
+                                <td class="p-5 text-right font-mono text-sm text-slate-300">${iQ > 0 ? iQ.toFixed(2) : '-'}</td>
+                                <td class="p-5 text-right font-mono text-sm text-slate-400">$${avgCost.toFixed(2)}</td>
+                                <td class="p-5 text-right font-mono text-base font-bold text-white">$${livePrice.toFixed(2)}</td>
+                                <td class="p-5 text-right">
+                                    <div class="${pnlColor} font-bold text-sm">${trendIcon} ${sign}${pnlPercent.toFixed(2)}%</div>
+                                    <div class="text-[11px] ${pnlColor} opacity-80 mt-1">${sign}$${Math.abs(pnlDollars).toFixed(2)}</div>
+                                </td>
+                                <td class="p-5 text-center">
+                                    <span class="border px-4 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest ${badgeColor}">${strat}</span>
+                                </td>
                             </tr>`;
                     });
                     document.getElementById('total-portfolio-value').innerText = '$' + totalVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 }
-            } catch (e) { 
-                console.error('Dashboard Error:', e); 
-            }
+            } catch (e) { console.error('System Error:', e); }
         }
 
+        // --- 4. CLOCK & INTERVAL ---
         function clock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-US', {hour12: false}); }
-        setInterval(updateDashboard, 300000); 
+        setInterval(updateDashboard, 60000); // 1-minute auto-refresh
         setInterval(clock, 1000);
         updateDashboard(); clock();
     </script>
