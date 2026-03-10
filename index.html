@@ -108,10 +108,33 @@
     </div>
 
     <script>
+        // Pre-filled working links
         const MAIN_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSSHPSKPENsvV4nIteNVeKtUovjDtc_GDGctm_yoTPIK2NtniBn-iKX30Oy0gxBxPiLA3fDtCmSf-SV/pub?gid=0&single=true&output=csv';
         const LEDGER_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSSHPSKPENsvV4nIteNVeKtUovjDtc_GDGctm_yoTPIK2NtniBn-iKX30Oy0gxBxPiLA3fDtCmSf-SV/pub?gid=353907484&single=true&output=csv';
 
         let livePrices = {};
+
+        // 100% Bulletproof CSV Parser (Replaces broken Regex)
+        function parseCSV(text) {
+            let rows = []; let currentRow = []; let currentCell = ''; let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+                if (char === '"' && inQuotes && text[i+1] === '"') { currentCell += '"'; i++; } 
+                else if (char === '"') { inQuotes = !inQuotes; } 
+                else if (char === ',' && !inQuotes) { currentRow.push(currentCell.trim()); currentCell = ''; } 
+                else if ((char === '\n' || char === '\r') && !inQuotes) {
+                    if (char === '\r' && text[i+1] === '\n') i++;
+                    currentRow.push(currentCell.trim());
+                    if (currentRow.some(c => c !== '')) rows.push(currentRow);
+                    currentRow = []; currentCell = '';
+                } else { currentCell += char; }
+            }
+            if (currentCell || currentRow.length > 0) {
+                currentRow.push(currentCell.trim());
+                if (currentRow.some(c => c !== '')) rows.push(currentRow);
+            }
+            return rows;
+        }
 
         function openTab(tabId) {
             document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
@@ -129,72 +152,90 @@
             const icon = document.getElementById('refresh-icon');
             icon.classList.add('animate-spin', 'text-cyan-400');
             await updateDashboard();
-            setTimeout(() => { icon.classList.remove('animate-spin', 'text-cyan-400'); }, 1000);
+            setTimeout(() => { icon.classList.remove('animate-spin', 'text-cyan-400'); }, 500);
         }
 
         async function updateDashboard() {
             try {
-                const [mRes, lRes] = await Promise.all([fetch(MAIN_CSV_URL), fetch(LEDGER_CSV_URL)]);
-                const mTxt = await mRes.text();
-                const lTxt = await lRes.text();
+                const [mRes, lRes] = await Promise.all([fetch(MAIN_CSV_URL).catch(() => null), fetch(LEDGER_CSV_URL).catch(() => null)]);
 
-                // 1. Process Prices
-                const mLines = mTxt.split('\n').map(r => r.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g)?.map(m => m.replace(/^"|"$/g, '')) || []);
-                document.getElementById('asset-container').innerHTML = '';
-                document.getElementById('intel-container').innerHTML = '';
-                
-                mLines.forEach((p, idx) => {
-                    if(idx === 0 && p[3]) document.getElementById('dynamic-assessment').innerText = p[3];
-                    const t = p[0]; const pr = parseFloat(p[1]); const int = p[2];
-                    if (t && !isNaN(pr)) {
-                        livePrices[t.trim()] = pr;
-                        document.getElementById('asset-container').innerHTML += `<div class="p-4 rounded-lg bg-[#111827] border border-white/5 flex justify-between items-center"><div class="text-white font-bold text-sm uppercase">${t}</div><div class="text-cyan-400 font-mono text-sm font-bold">$${pr.toFixed(2)}</div></div>`;
-                    }
-                    if (int && int.length > 5 && t !== "Ticker") {
-                        document.getElementById('intel-container').innerHTML += `<div class="bg-[#111827] border border-white/5 rounded-lg p-5 mb-4"><p class="text-sm text-slate-300 leading-relaxed">${int}</p></div>`;
-                    }
-                });
-
-                // 2. Process Ledger Math (MPLX/MLPX correction built-in)
-                const lLines = lTxt.split('\n');
-                let totalVal = 0;
-                document.getElementById('exposure-tbody').innerHTML = '';
-
-                lLines.forEach((line, idx) => {
-                    if(idx === 0) return;
-                    const p = line.split(',');
-                    const rawT = p[0] ? p[0].trim() : "";
-                    if(rawT.length < 2) return;
+                if (mRes && mRes.ok) {
+                    const mTxt = await mRes.text();
+                    const mLines = parseCSV(mTxt);
                     
-                    const rQ = parseFloat(p[1]) || 0; const rC = parseFloat(p[2]) || 0;
-                    const iQ = parseFloat(p[3]) || 0; const iC = parseFloat(p[4]) || 0;
-                    const st = p[5] ? p[5].replace(/^"|"$/g, '') : 'HOLD';
-
-                    // Correct for the MPLX typo
-                    let live = livePrices[rawT] || livePrices["MLPX"] || livePrices["MPLX"] || 0;
+                    document.getElementById('asset-container').innerHTML = '';
+                    document.getElementById('intel-container').innerHTML = '';
                     
-                    const posV = (rQ + iQ) * live;
-                    const costB = (rQ * rC) + (iQ * iC);
-                    const pnlD = posV - costB;
-                    const pnlP = costB > 0 ? (pnlD / costB) * 100 : 0;
-                    totalVal += posV;
+                    mLines.forEach((p, idx) => {
+                        if(p.length < 2) return;
+                        if(idx === 0 && p[3]) document.getElementById('dynamic-assessment').innerText = p[3];
+                        
+                        const t = p[0]; const pr = parseFloat(p[1]); const int = p[2];
 
-                    let bC = 'border-slate-500/30 text-slate-400 bg-slate-500/10';
-                    if(st.includes('Profit')) bC = 'border-emerald-500/30 text-emerald-500 bg-emerald-500/10';
-                    if(st.includes('Loss')) bC = 'border-purple-500/30 text-purple-400 bg-purple-500/10';
+                        if (t && !isNaN(pr) && t !== 'Ticker') {
+                            livePrices[t.toUpperCase()] = pr;
+                            document.getElementById('asset-container').innerHTML += `<div class="p-4 rounded-lg bg-[#111827] border border-white/5 flex justify-between items-center"><div class="text-white font-bold text-sm uppercase">${t}</div><div class="text-cyan-400 font-mono text-sm font-bold">$${pr.toFixed(2)}</div></div>`;
+                        }
 
-                    document.getElementById('exposure-tbody').innerHTML += `
-                        <tr class="hover:bg-white/[0.02]">
-                            <td class="p-4 font-bold text-white uppercase">${rawT}</td>
-                            <td class="p-4 text-right"><div class="text-slate-300 font-mono">${rQ > 0 ? rQ.toFixed(2) : '-'}</div><div class="text-[10px] text-slate-500">${rC > 0 ? '@ $'+rC : ''}</div></td>
-                            <td class="p-4 text-right"><div class="text-slate-300 font-mono">${iQ > 0 ? iQ.toFixed(2) : '-'}</div><div class="text-[10px] text-slate-500">${iC > 0 ? '@ $'+iC : ''}</div></td>
-                            <td class="p-4 text-right text-white font-mono font-bold">$${live.toFixed(2)}</td>
-                            <td class="p-4 text-right"><div class="${pnlD >= 0 ? 'text-emerald-500' : 'text-red-400'} font-bold">${pnlD >= 0 ? '+' : ''}${pnlP.toFixed(2)}%</div><div class="text-[11px] opacity-70">${pnlD >= 0 ? '+' : ''}$${Math.abs(pnlD).toFixed(2)}</div></td>
-                            <td class="p-4 text-center"><span class="border px-3 py-1 rounded text-[9px] font-bold uppercase ${bC}">${st}</span></td>
-                        </tr>`;
-                });
-                document.getElementById('total-portfolio-value').innerText = '$' + totalVal.toLocaleString(undefined, {minimumFractionDigits: 2});
-            } catch (e) { console.error(e); }
+                        if (int && int.length > 5 && t !== "Ticker") {
+                            let tag = "UPDATE"; let tagColor = "bg-blue-900/30 border-blue-500/30 text-blue-400";
+                            const match = int.match(/^\[(.*?)\]\s*(.*)/);
+                            let content = int;
+                            
+                            if (match) { tag = match[1]; content = match[2]; }
+                            if(tag.includes("CRITICAL")) tagColor = "bg-red-900/30 border-red-500/30 text-red-500";
+                            else if(tag.includes("INFRA")) tagColor = "bg-orange-900/30 border-orange-500/30 text-orange-400";
+                            else if(tag.includes("MARKET")) tagColor = "bg-emerald-900/30 border-emerald-500/30 text-emerald-400";
+                            else if(tag.includes("TECH")) tagColor = "bg-purple-900/30 border-purple-500/30 text-purple-400";
+                            else if(tag.includes("CYBER")) tagColor = "bg-yellow-900/30 border-yellow-500/30 text-yellow-500";
+
+                            document.getElementById('intel-container').innerHTML += `<div class="bg-[#111827] border border-white/5 rounded-lg p-5 mb-4"><div class="${tagColor} border px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider inline-block mb-3">${tag}</div><p class="text-sm text-slate-300 leading-relaxed">${content}</p></div>`;
+                        }
+                    });
+                }
+
+                if (lRes && lRes.ok) {
+                    const lTxt = await lRes.text();
+                    const lLines = parseCSV(lTxt);
+                    let totalVal = 0;
+                    document.getElementById('exposure-tbody').innerHTML = '';
+
+                    lLines.forEach((p, idx) => {
+                        if(idx === 0 || p.length < 2) return;
+                        const rawT = p[0] ? p[0].toUpperCase() : '';
+                        if(rawT.length < 2) return;
+                        
+                        const rQ = parseFloat(p[1]) || 0; const rC = parseFloat(p[2]) || 0;
+                        const iQ = parseFloat(p[3]) || 0; const iC = parseFloat(p[4]) || 0;
+                        const st = p[5] || 'HOLD';
+
+                        let live = livePrices[rawT] || livePrices["MLPX"] || livePrices["MPLX"] || 0;
+                        
+                        const posV = (rQ + iQ) * live;
+                        const costB = (rQ * rC) + (iQ * iC);
+                        const pnlD = posV - costB;
+                        const pnlP = costB > 0 ? (pnlD / costB) * 100 : 0;
+                        totalVal += posV;
+
+                        let bC = 'border-slate-500/30 text-slate-400 bg-slate-500/10';
+                        if(st.toLowerCase().includes('profit')) bC = 'border-emerald-500/30 text-emerald-500 bg-emerald-500/10';
+                        else if(st.toLowerCase().includes('loss')) bC = 'border-purple-500/30 text-purple-400 bg-purple-500/10';
+
+                        document.getElementById('exposure-tbody').innerHTML += `
+                            <tr class="hover:bg-white/[0.02] border-b border-[#1e293b] last:border-0">
+                                <td class="p-4 font-bold text-white uppercase">${rawT}</td>
+                                <td class="p-4 text-right"><div class="text-slate-300 font-mono">${rQ > 0 ? rQ.toFixed(2) : '-'}</div><div class="text-[10px] text-slate-500">${rC > 0 ? '@ $'+rC.toFixed(2) : ''}</div></td>
+                                <td class="p-4 text-right"><div class="text-slate-300 font-mono">${iQ > 0 ? iQ.toFixed(2) : '-'}</div><div class="text-[10px] text-slate-500">${iC > 0 ? '@ $'+iC.toFixed(2) : ''}</div></td>
+                                <td class="p-4 text-right text-white font-mono font-bold">$${live.toFixed(2)}</td>
+                                <td class="p-4 text-right"><div class="${pnlD >= 0 ? 'text-emerald-500' : 'text-red-400'} font-bold">${pnlD >= 0 ? '+' : ''}${pnlP.toFixed(2)}%</div><div class="text-[11px] opacity-70">${pnlD >= 0 ? '+' : ''}$${Math.abs(pnlD).toFixed(2)}</div></td>
+                                <td class="p-4 text-center"><span class="border px-3 py-1 rounded text-[9px] font-bold uppercase ${bC}">${st}</span></td>
+                            </tr>`;
+                    });
+                    document.getElementById('total-portfolio-value').innerText = '$' + totalVal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                }
+            } catch (e) { 
+                console.error('Dashboard Error:', e); 
+            }
         }
 
         function clock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-US', {hour12: false}); }
