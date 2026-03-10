@@ -9,6 +9,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap');
         body { font-family: 'Space+Grotesk', sans-serif; background-color: #050a10; color: #e2e8f0; }
         .tab-active { border-bottom: 2px solid #06b6d4; color: #06b6d4; background: rgba(6,182,212,0.05); }
+        .hidden { display: none; }
         .critical-pulse { animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
@@ -18,106 +19,92 @@
         
         <div class="p-6 border-b border-[#1e293b] flex flex-col md:flex-row justify-between items-center bg-[#0d151d] gap-4">
             <div>
-                <h1 class="text-xl md:text-2xl font-bold tracking-widest text-white">GLOBAL MACRO COMMAND CENTER</h1>
-                <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-[0.3em]">Strategic Portfolio & Geopolitical Integration</p>
+                <h1 class="text-xl md:text-2xl font-bold tracking-widest text-white uppercase">Global Macro Command Center</h1>
+                <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-[0.3em]">McLean Godley | Geopolitical Strategy Unit</p>
             </div>
             <div class="flex items-center gap-4 bg-black/40 p-3 rounded-lg border border-white/5">
                 <div class="text-right">
-                    <div class="text-[9px] text-slate-500 uppercase font-bold mb-1">OPERATION EPIC FURY</div>
-                    <span class="bg-red-900/20 text-red-500 text-[10px] px-2 py-1 rounded border border-red-500/30 critical-pulse font-bold">THREAT: CRITICAL</span>
+                    <span class="bg-red-900/20 text-red-500 text-[10px] px-2 py-1 rounded border border-red-500/30 critical-pulse font-bold uppercase">Threat: Critical</span>
                 </div>
                 <div class="w-px h-8 bg-white/10 mx-2"></div>
                 <div class="text-right">
-                    <div class="text-[9px] text-slate-500 uppercase font-bold mb-1">LIVE SYNC</div>
                     <span id="clock" class="text-cyan-400 font-mono text-sm tracking-tighter">00:00:00</span>
                 </div>
             </div>
         </div>
 
-        <div class="flex border-b border-[#1e293b] bg-[#0d151d] overflow-x-auto">
-            <button class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest tab-active">Situation Report</button>
-            <button class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-all">Holdings Background</button>
-            <button class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-all">Exposure Matrix</button>
-            <button class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-all">Scenario Mechanics</button>
-            <button class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-all">Financial Projections</button>
+        <div class="flex border-b border-[#1e293b] bg-[#0d151d] overflow-x-auto" id="tab-nav">
+            <button onclick="switchTab('situation')" id="btn-situation" class="tab-btn px-6 py-4 text-[10px] font-bold uppercase tracking-widest tab-active">Situation Report</button>
+            <button onclick="switchTab('holdings')" id="btn-holdings" class="tab-btn px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-all">Holdings Background</button>
+            <button onclick="switchTab('exposure')" id="btn-exposure" class="tab-btn px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-all">Exposure Matrix</button>
+            <button onclick="switchTab('scenarios')" id="btn-scenarios" class="tab-btn px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-all">Scenario Mechanics</button>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3">
-            <div class="lg:col-span-2 p-8 border-r border-[#1e293b]">
-                <h2 class="text-[11px] font-bold text-slate-500 mb-8 flex items-center gap-2 uppercase tracking-widest">
-                    <span class="text-orange-500">⚠️</span> Real-Time Intelligence Sweep
-                </h2>
-                <div id="intel-container" class="space-y-8">
-                    </div>
-            </div>
-
-            <div class="p-8 bg-[#080e14]">
-                <h2 class="text-[11px] font-bold text-slate-500 mb-8 flex items-center gap-2 uppercase tracking-widest">
-                    <span class="text-cyan-500">📈</span> Active Asset Tracking
-                </h2>
-                <div id="asset-container" class="space-y-4">
-                    </div>
+        <div id="tab-content-situation" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-3">
+                <div class="lg:col-span-2 p-8 border-r border-[#1e293b]">
+                    <h2 class="text-[11px] font-bold text-slate-500 mb-8 flex items-center gap-2 uppercase tracking-widest">⚠️ Real-Time Intelligence Sweep</h2>
+                    <div id="intel-container" class="space-y-8"></div>
+                </div>
+                <div class="p-8 bg-[#080e14]">
+                    <h2 class="text-[11px] font-bold text-slate-500 mb-8 flex items-center gap-2 uppercase tracking-widest">📈 Active Asset Tracking</h2>
+                    <div id="asset-container" class="space-y-4"></div>
+                </div>
             </div>
         </div>
+
+        <div id="tab-content-holdings" class="tab-content hidden p-12 text-center text-slate-500 italic">Holdings Background View: Awaiting Portfolio Breakdown...</div>
+        <div id="tab-content-exposure" class="tab-content hidden p-12 text-center text-slate-500 italic">Exposure Matrix View: Analyzing Risk Vectors...</div>
+        <div id="tab-content-scenarios" class="tab-content hidden p-12 text-center text-slate-500 italic">Scenario Mechanics: Simulating Market Outcomes...</div>
 
         <div class="p-8 border-t border-[#1e293b] bg-[#0d151d]/50">
-            <h3 class="text-[11px] font-bold text-cyan-500 mb-4 flex items-center gap-2 uppercase tracking-widest">
-                🌐 McKinsey/Fund Strategic Assessment
-            </h3>
-            <p class="text-sm text-slate-400 leading-relaxed font-light">
-                The current threat environment is characterized by extreme tail risks stemming from asymmetric naval warfare in the Strait of Hormuz. The portfolio must be defensively positioned to capture sudden spikes in the geopolitical risk premium (<span class="text-cyan-400 font-bold">$BNO</span>, <span class="text-cyan-400 font-bold">$LNG</span>) while maintaining structural allocations to long-term sovereign security themes (<span class="text-cyan-400 font-bold">$URNM</span>, <span class="text-cyan-400 font-bold">$CEG</span>, <span class="text-cyan-400 font-bold">$SHLD</span>). Tax-advantaged accounts should be utilized for aggressive rebalancing to avoid short-term capital gains drag during this high-volatility window.
-            </p>
+            <h3 class="text-[11px] font-bold text-cyan-500 mb-4 flex items-center gap-2 uppercase tracking-widest">🌐 McKinsey/Fund Strategic Assessment</h3>
+            <p class="text-sm text-slate-400 leading-relaxed font-light">The current threat environment is characterized by extreme tail risks stemming from asymmetric naval warfare in the Strait of Hormuz. The portfolio must be defensively positioned to capture sudden spikes in the geopolitical risk premium ($BNO, $LNG) while maintaining structural allocations to long-term sovereign security themes ($URNM, $CEG, $SHLD).</p>
         </div>
-
     </div>
 
     <script>
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSSHPSKPENsvV4nIteNVeKtUovjDtc_GDGctm_yoTPIK2NtniBn-iKX30Oy0gxBxPiLA3fDtCmSf-SV/pub?gid=0&single=true&output=csv';
 
+        // TAB SWITCHING LOGIC
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('tab-active', 'text-cyan-400'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.add('text-slate-500'));
+
+            document.getElementById('tab-content-' + tabName).classList.remove('hidden');
+            document.getElementById('btn-' + tabName).classList.add('tab-active', 'text-cyan-400');
+            document.getElementById('btn-' + tabName).classList.remove('text-slate-500');
+        }
+
         async function updateDashboard() {
             try {
                 const response = await fetch(CSV_URL);
                 const text = await response.text();
-                const rows = text.split('\n').map(row => row.split(','));
-
+                const lines = text.split('\n');
                 const assetContainer = document.getElementById('asset-container');
                 const intelContainer = document.getElementById('intel-container');
                 
                 assetContainer.innerHTML = '';
                 intelContainer.innerHTML = '';
 
-                rows.forEach(row => {
-                    if (row[0] && row[1] && !isNaN(parseFloat(row[1]))) {
-                        assetContainer.innerHTML += `
-                            <div class="p-4 rounded-lg bg-[#0b1219] border border-white/5 flex justify-between items-center group hover:border-cyan-500/40 transition-all">
-                                <div>
-                                    <div class="text-white font-bold text-sm tracking-wider">${row[0]}</div>
-                                    <div class="text-[8px] text-slate-600 uppercase">Live Market Feed</div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-white font-mono text-sm font-bold">$${parseFloat(row[1]).toFixed(2)}</div>
-                                    <div class="text-[8px] text-cyan-500">Live Data ●</div>
-                                </div>
-                            </div>
-                        `;
-                    }
+                lines.forEach(line => {
+                    const parts = line.split(',');
+                    const ticker = parts[0];
+                    const price = parts[1];
+                    const news = parts.slice(2).join(',').replace(/^"|"$/g, '');
 
-                    if (row[2] && row[2].trim().length > 5) {
-                        intelContainer.innerHTML += `
-                            <div class="group">
-                                <div class="text-[9px] font-bold text-cyan-500/60 mb-2 tracking-widest">DATA PACKET RECEIVED</div>
-                                <p class="text-sm text-slate-300 leading-relaxed font-light border-l border-white/10 pl-4 group-hover:border-cyan-500/50 transition-all">${row[2]}</p>
-                            </div>
-                        `;
+                    if (ticker && !isNaN(parseFloat(price))) {
+                        assetContainer.innerHTML += `<div class="p-4 rounded-lg bg-[#0b1219] border border-white/5 flex justify-between items-center"><div class="text-white font-bold text-sm uppercase">${ticker}</div><div class="text-cyan-400 font-mono text-sm font-bold">$${parseFloat(price).toFixed(2)}</div></div>`;
+                    }
+                    if (news && news.trim().length > 5) {
+                        intelContainer.innerHTML += `<div class="relative pl-6 border-l border-cyan-500/20 py-1"><div class="text-[9px] font-bold text-cyan-500/60 mb-1 tracking-widest uppercase">Data Packet Received</div><p class="text-sm text-slate-300 leading-relaxed font-light">${news}</p></div>`;
                     }
                 });
-            } catch (e) { console.error("Sync Failure", e); }
+            } catch (e) { console.error("Sync Error", e); }
         }
 
-        function clock() {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB');
-        }
-
+        function clock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB'); }
         setInterval(updateDashboard, 300000); 
         setInterval(clock, 1000);
         updateDashboard();
