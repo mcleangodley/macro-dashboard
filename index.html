@@ -231,8 +231,7 @@ async function updateDashboard() {
                     else if(tag.includes("CYBER")) tagColor = "bg-yellow-950/40 text-yellow-500 border border-yellow-500/30";
 
                     // Creates sequential spacing for news items based on the row index
-                    const pTime = new Date(); pTime.setMinutes(pTime.getMinutes() - (idx * 5));
-                    const timeStr = pTime.toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit', hour12: false}) + ' EDT';
+                    const timeStr = "LATEST";
 
                     document.getElementById('intel-container').innerHTML += `<div class="relative intel-node pb-2"><div class="flex items-center gap-3 mb-2"><span class="text-xs text-slate-500 font-mono">${timeStr}</span><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${tagColor}">${tag}</span></div><p class="text-sm text-slate-300 leading-relaxed pr-4">${content}</p></div>`;
                 }
